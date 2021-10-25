@@ -15,45 +15,39 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Getting the database object handle from the app
 db = SQLAlchemy(app)
 
-# define Model for Banks table
-class Bank(db.Model):
-    __tablename__ = 'Banks'
-    code = db.Column(db.Unicode, primary_key=True)
-    name = db.Column(db.Unicode, nullable=False)
-    address = db.Column(db.Unicode, nullable=False)
-    accounts = db.relationship('Account', backref='bank')
+# define Model for Users table
+class User(db.Model):
+    __tablename__ = 'Users'
+    email = db.Column(db.Unicode, primary_key=True)
+    username = db.Column(db.Unicode, nullable=False)
+    password = db.Column(db.Unicode, nullable=False)
+    accounts = db.relationship('User', backref='user')
     def __str__(self):
-        return f"Bank(name={self.name}, code={self.code})"
+        return f"User(username={self.username}, email={self.email})"
     def __repr__(self):
-        return f"Bank({self.code})"
+        return f"User({self.email})"
 
-# define Model for Customers table
-class Customer(db.Model):
-    __tablename__ = 'Customers'
-    c_number = db.Column(db.Integer, primary_key=True)
+# define Model for Room table
+class Room(db.Model):
+    __tablename__ = 'Rooms'
+    user = db.Column(db.Unicode, db.ForeignKey('Users.email'))
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode, nullable=False)
-    phone = db.Column(db.Unicode, nullable=False)
-    email = db.Column(db.Unicode, nullable=False)
-    address = db.Column(db.Unicode, nullable=False)
-    membership = db.Column(db.Unicode, nullable=True)
-    accounts = db.relationship('Account', backref='customer')
+    users = db.relationship('User', backref='room')
     def __str__(self):
-        return f"Customer(name={self.name}, id={self.c_number})"
-    def __repr__(self):
-        return f"Customer({self.c_number})"
+        return f"Room(id={self.id}, name={self.name})"
+    def __repr__(self): 
+        return f"Room({self.id})"
 
-# define Model for Accounts table
-class Account(db.Model):
-    __tablename__ = 'Accounts'
-    customer_no = db.Column(db.Integer, db.ForeignKey('Customers.c_number'))
-    code = db.Column(db.Unicode, db.ForeignKey('Banks.code'))
-    account_no = db.Column(db.Integer, primary_key=True)
-    startdate = db.Column(db.Date, nullable=False)
-    balance = db.Column(db.Float, nullable=False)
-    def __str__(self):
-        return f"Customer(customer={self.customer.name}, bank={self.bank.name})"
-    def __repr__(self):
-        return f"Account({self.account_no})"
+# define Model for Message table
+class Message(db.Model):
+    __tablename__ = "Messages"
+    user = db.Column(db.Unicode, db.ForeignKey('Users.email'))
+    room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
+    id = db.Column(db.Integer, primary_key=True)
+    time = db.Column(db.Unicode, nullable=False)
+    accounts = db.relationship('User', backref='message')
+    rooms = db.relationship('Room', backref='message')
 
 # Refresh the database to reflect these models
 db.drop_all()

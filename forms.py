@@ -1,5 +1,15 @@
 from flask_wtf import FlaskForm
+from wtforms.validators import EqualTo, InputRequired, Email
+from wtforms.fields.core import StringField
+from wtforms.fields.html5 import EmailField
+from wtforms.fields.simple import PasswordField, SubmitField
 class LoginForm(FlaskForm):
-    pass
+    username = StringField("Enter username: ", validators=[InputRequired()])
+    password = PasswordField("Enter password: ", validators=[InputRequired()])
+    submit = SubmitField("Submit")
 class RegisterForm(FlaskForm):
-    pass
+    username = StringField("Enter username: ", validators=[InputRequired()])
+    password = PasswordField("Enter password: ", validators=[InputRequired()])
+    confirm_password = PasswordField("Enter password: ", validators=[InputRequired(), EqualTo('password')])
+    email = EmailField("Enter email: ", validators=[InputRequired(), Email()])
+    submit = SubmitField("Submit")

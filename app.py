@@ -70,7 +70,7 @@ def login():
     
     if form.validate_on_submit():
 
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
 
         if user is not None and user.verify_password(form.password.data):
             login_user(user)

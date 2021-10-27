@@ -56,6 +56,9 @@ def register():
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('login'))
+    elif user is not None:
+        flash("It looks like you already have an account. Please log in.")
+        return redirect(url_for('login'))
     else:
         flash("There's a problem with what you've entered...")
         for field, error in form.errors.items():

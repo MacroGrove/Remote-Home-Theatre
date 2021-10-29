@@ -116,18 +116,19 @@ def room():
 # define Model for Users table
 class User(db.Model):
     __tablename__ = 'Users'
-    email = db.Column(db.Unicode, primary_key=True)
+    id = db.Column(db.Unicode, primary_key=True)
+    email = db.Column(db.Unicode, unique=True, nullable=False)
     username = db.Column(db.Unicode, nullable=False)
     password_hash = db.Column(db.LargeBinary)
-    # accounts = db.relationship('User', backref='user')
+    verified = db.Column(db.Boolean, nullable=False)
+    rooms = db.relationship('Room', backref='owner')
+    messages = db.relationship('Message', backref='owner')
+
     def __str__(self):
         return f"User(username={self.username}, email={self.email})"
     def __repr__(self):
         return f"User({self.email})"
-    # def __init__(self, password, email, username):
-    #     self.password = password
-    #     self.email = email
-    #     self.username = username
+
     @property
     def password(self):
         raise AttributeError("Password is a write-only attribute")
@@ -150,10 +151,11 @@ class User(db.Model):
 # define Model for Room table
 class Room(db.Model):
     __tablename__ = 'Rooms'
-    user = db.Column(db.Unicode, db.ForeignKey('Users.email'))
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Unicode, nullable=False)
-    users = db.relationship('User', backref='room')
+    code = db.Column(db.Unicode, unique=True, nullable=False)
+    title = db.Column(db.Unicode, nullable=False)
+
     def __str__(self):
         return f"Room(id={self.id}, name={self.name})"
     def __repr__(self): 
@@ -162,12 +164,14 @@ class Room(db.Model):
 # define Model for Message table
 class Message(db.Model):
     __tablename__ = "Messages"
-    user = db.Column(db.Unicode, db.ForeignKey('Users.email'))
-    room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
+    users = db.Column(db.Unicode, db.ForeignKey('Users.id'))
+    rooms = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
     id = db.Column(db.Integer, primary_key=True)
-    time = db.Column(db.Unicode, nullable=False)
-    accounts = db.relationship('User', backref='message')
-    rooms = db.relationship('Room', backref='message')
+    time = db.Column(db.DateTime, nullable=False)
+    message = db.Column(db.Unicode, nullable=False)
+
+class VerificationCodes(db.Model):
+    pass
 
 # Refresh the database to reflect these models
 db.drop_all()

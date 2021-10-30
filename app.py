@@ -64,7 +64,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.Unicode, unique=True, nullable=False)
     username = db.Column(db.Unicode, nullable=False)
     password_hash = db.Column(db.LargeBinary)
-    verified = db.Column(db.Boolean, nullable=False)
+    is_verified = db.Column(db.Boolean, nullable=False)
     rooms = db.relationship('Room', backref='owner')
     messages = db.relationship('Message', backref='owner')
 
@@ -83,15 +83,19 @@ class User(UserMixin, db.Model):
     
     def verify_password(self,pwd):
         return pwd_hasher.check(pwd, self.password_hash)
+
+    def verify_email(self):
+        pass
     
     def is_active():
         return True
 
     def get_id(self):
-        return self.email
+        return self.id
     
-    def is_authenticated():
+    def is_authenticated(self):
         return True
+    
 
 # Create a database model for rooms
 class Room(db.Model):
@@ -102,22 +106,26 @@ class Room(db.Model):
     title = db.Column(db.Unicode, nullable=False)
 
     def __str__(self):
-        return f"Room(id={self.id}, name={self.name})"
+        return f"Room {self.id} - {self.name})"
     def __repr__(self): 
         return f"Room({self.id})"
 
 # Create a database model for messages
 class Message(db.Model):
     __tablename__ = "Messages"
-    users = db.Column(db.Unicode, db.ForeignKey('Users.id'))
-    rooms = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
+    user = db.Column(db.Unicode, db.ForeignKey('Users.id'))
+    room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
     id = db.Column(db.Integer, primary_key=True)
     time = db.Column(db.DateTime, nullable=False)
     message = db.Column(db.Unicode, nullable=False)
 
+    def __str__(self):
+        return f"{self.message}"
+
 # Create a database model for email verification codes
 class VerificationCodes(db.Model):
-    pass
+    user = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    code = db.Column(db.Unicode, primary_key=True)
 
 # Refresh the database to reflect these models
 db.drop_all()
@@ -146,7 +154,7 @@ def register():
         db.session.commit()
         return redirect(url_for('login'))
     elif user is not None:
-        flash("It looks like you already have an account. Please log in.")
+        flash("This email is already associated with an account. Please choose another or log in.")
         return redirect(url_for('login'))
     else:
         flash("There's a problem with what you've entered...")

@@ -12,10 +12,11 @@ python -m pip install --upgrade flask-login
 import os
 from flask import Flask, render_template, url_for, redirect
 from flask import request, session, flash
+from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin
 from hasher import Hasher
-from forms import LoginForm, RegisterForm, RoomForm
+from forms import InputVidForm, LoginForm, RegisterForm, InputVidForm, RoomForm
 from datetime import date
 
 ###############################################################################
@@ -209,12 +210,43 @@ def lobby():
     #User can be accessed by current_user in templates
     return render_template('lobby.j2')
 
-@app.route('/room/')
+@app.route('/room/',  methods=['GET','POST'])
 @login_required
 def room():
+
+    
     #User can be accessed by current_user in templates
 
     #Initialize the room???
     room_id = request.args.get('rid')
     room = Room()
-    return render_template('room.j2', room=room)
+
+    #Form to accept youtube link
+    vidForm = InputVidForm()
+
+    
+    if request.method == 'GET':
+        
+        
+        if "video" in session:
+            vid = session['video']
+            vid = vid.replace("watch?v=", "embed/")
+            return render_template('roomWithVid.j2', room=room, vid=vid)
+        else:
+            return render_template('roomWithoutVid.j2', room=room, vidForm=vidForm)
+
+    if vidForm.validate():
+        session['video'] = vidForm.video.data
+        return redirect(url_for("room"))
+    else:
+        for field, error in vidForm.errors.items():
+            flash(f"{field}: {error}")
+        return redirect(url_for("room"))
+
+
+
+
+    
+
+    
+

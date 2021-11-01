@@ -15,7 +15,7 @@ from flask import request, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin
 from hasher import Hasher
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, RoomForm
 from datetime import date
 
 ###############################################################################
@@ -138,8 +138,16 @@ db.create_all()
 @app.get('/')
 @app.get('/home/')
 def index():
-    return render_template('home.j2') #You can access current_user here
-
+    form = RoomForm()
+    if request.method == 'GET':  
+        return render_template('home.j2', form=form) #You can access current_user here
+    if form.validate():
+        return redirect(url_for('room'))
+    else:
+        flash("That room does not exist")
+        for field, error in form.errors.items():
+            flash(f"{field} - {error}")
+        return render_template('home.j2', form=form)
 @app.route('/register/', methods=['GET','POST'])
 def register():
     form = RegisterForm()

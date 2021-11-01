@@ -14,3 +14,6 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField("Confirm password: ", validators=[InputRequired(), EqualTo('password')])
     email = EmailField("Enter email: ", validators=[InputRequired(), Email()])
     submit = SubmitField("Submit")
+class RoomForm(FlaskForm):
+    room =  StringField("", validators=[InputRequired()])
+    submit = SubmitField("Submit")

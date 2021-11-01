@@ -14,3 +14,7 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField("Confirm password: ", validators=[InputRequired(), EqualTo('password')])
     email = EmailField("Enter email: ", validators=[InputRequired(), Email()])
     submit = SubmitField("Submit")
+
+class InputVidForm(FlaskForm):
+    video = StringField("Enter video link: ")
+    submit = SubmitField("Submit")

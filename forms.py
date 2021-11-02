@@ -16,6 +16,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField("Submit")
 class InputVidForm(FlaskForm):
     video = StringField("Enter video link: ")
+    submit = SubmitField("Submit")
 class RoomForm(FlaskForm):
     room =  StringField("", validators=[InputRequired()])
     submit = SubmitField("Submit")

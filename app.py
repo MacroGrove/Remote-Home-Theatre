@@ -18,6 +18,7 @@ from flask_login import login_required, login_user, logout_user, LoginManager, U
 from hasher import Hasher
 from forms import InputVidForm, LoginForm, RegisterForm, InputVidForm, RoomForm
 from datetime import date
+import yagmail
 
 ###############################################################################
 # Basic Configuration
@@ -26,6 +27,9 @@ from datetime import date
 # Determine the absolute path of our database file
 scriptdir = os.path.abspath(os.path.dirname(__file__))
 dbpath = os.path.join(scriptdir, 'theatre.sqlite3')
+
+# Set up email
+yag = yagmail.SMTP("noreply.remotehometheatre@gmail.com")
 
 # Set-up hasher
 scriptdir = os.path.dirname(__file__)
@@ -61,7 +65,7 @@ def load_user(email):
 # Create a database model for users
 class User(UserMixin, db.Model):
     __tablename__ = 'Users'
-    id = db.Column(db.Unicode, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Unicode, unique=True, nullable=False)
     username = db.Column(db.Unicode, nullable=False)
     password_hash = db.Column(db.LargeBinary)
@@ -136,14 +140,14 @@ db.create_all()
 # Route Handlers
 ###############################################################################
 
-@app.get('/')
-@app.get('/home/')
+@app.route('/')
+@app.route('/home/', methods=['GET','POST'])
 def index():
     form = RoomForm()
     if request.method == 'GET':  
         return render_template('home.j2', form=form) #You can access current_user here
     if form.validate():
-        return redirect(url_for('room'))
+        return redirect(f'/room/?roomid={form.room.data}')
     else:
         flash("That room does not exist")
         for field, error in form.errors.items():
@@ -158,9 +162,14 @@ def register():
     user = User.query.filter_by(email=form.email.data).first()
     if form.validate() and user is None:
         #...
-        user = User(password=form.password.data, email=form.email.data, username=form.username.data)
+        user = User(password=form.password.data, email=form.email.data, username=form.username.data, is_verified=False)
         db.session.add(user)
         db.session.commit()
+        yag.send(
+            to=form.email.data,
+            subject="Welcome!",
+            contents=f"""Hi, {form.username.data}!\nWelcome to Remote Home Theatre.\n\nBest,\n\nThe RHT Team""", 
+        ) #Make this message nicer.
         return redirect(url_for('login'))
     elif user is not None:
         flash("This email is already associated with an account. Please choose another or log in.")

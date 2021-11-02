@@ -26,10 +26,7 @@ import yagmail
 
 # Determine the absolute path of our database file
 scriptdir = os.path.abspath(os.path.dirname(__file__))
-dbpath = os.path.join(scriptdir, 'theatre.sqlite3')
-
-# Set up email
-yag = yagmail.SMTP("noreply.remotehometheatre@gmail.com")
+dbpath = os.path.join(scriptdir, "theatre.sqlite3")
 
 # Set-up hasher
 scriptdir = os.path.dirname(__file__)
@@ -40,18 +37,21 @@ with open(pepfile, 'rb') as fin:
 
 pwd_hasher = Hasher(pepper_key)
 
-# Getting the database object handle from the app
-
 app = Flask(__name__)
-db = SQLAlchemy(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{dbpath}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SEND_FILE_MAX_AGE'] = 0
 app.config['SECRET_KEY'] = 'bellbottomedbabybutterbellybuttonsimpletonbub'
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{dbpath}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Getting the database object handle from the app
+db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
+# Set up email
+yag = yagmail.SMTP("noreply.remotehometheatre@gmail.com")
 
 @login_manager.user_loader
 def load_user(email):
@@ -74,9 +74,7 @@ class User(UserMixin, db.Model):
     messages = db.relationship('Message', backref='owner')
 
     def __str__(self):
-        return f"User(username={self.username}, email={self.email})"
-    def __repr__(self):
-        return f"User({self.email})"
+        return f"{self.username}"
 
     # make a write-only password property that just updates the stored hash
     @property
@@ -153,6 +151,7 @@ def index():
         for field, error in form.errors.items():
             flash(f"{field} - {error}")
         return render_template('home.j2', form=form)
+
 @app.route('/register/', methods=['GET','POST'])
 def register():
     form = RegisterForm()
@@ -205,7 +204,6 @@ def login():
             flash(f"{field} - {error}")
         return render_template('login.j2', form=form)
 
-
 @app.get('/logout/')
 @login_required
 def logout():
@@ -223,7 +221,6 @@ def lobby():
 @login_required
 def room():
 
-    
     #User can be accessed by current_user in templates
 
     #Initialize the room???
@@ -233,10 +230,7 @@ def room():
     #Form to accept youtube link
     vidForm = InputVidForm()
 
-    
-    if request.method == 'GET':
-        
-        
+    if request.method == 'GET':        
         if "video" in session:
             vid = session['video']
             vid = vid.replace("watch?v=", "embed/")

@@ -143,14 +143,15 @@ db.create_all()
 def index():
     form = RoomForm()
     if request.method == 'GET':  
-        return render_template('home.j2', form=form) #You can access current_user here
+        return render_template('home.html', form=form) #You can access current_user here
+   
     if form.validate():
         return redirect(f'/room/?roomid={form.room.data}')
     else:
         flash("That room does not exist")
         for field, error in form.errors.items():
             flash(f"{field} - {error}")
-        return render_template('home.j2', form=form)
+        return render_template('home.html', form=form)
 
 @app.route('/register/', methods=['GET','POST'])
 def register():

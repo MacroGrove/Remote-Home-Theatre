@@ -22,5 +22,5 @@ class InputVidForm(FlaskForm):
     submit = SubmitField("Submit")
 
 class RoomForm(FlaskForm):
-    room =  StringField("", validators=[InputRequired()])
+    room =  StringField("Room Code", validators=[InputRequired()])
     submit = SubmitField("Submit")

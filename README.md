@@ -8,3 +8,5 @@ Group project for Web Development Class.
 - Chat system
 - Room creation with Admin account
 - Guest access with room code
+
+## Quick Setup

@@ -107,6 +107,7 @@ class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.Unicode, unique=True, nullable=False)
     title = db.Column(db.Unicode, nullable=False)
+    description = db.Column(db.Unicode)
 
     def __str__(self):
         return f"Room {self.id} - {self.name})"
@@ -131,8 +132,8 @@ class VerificationCodes(db.Model):
     code = db.Column(db.Unicode, primary_key=True)
 
 # Refresh the database to reflect these models
-db.drop_all()
-db.create_all()
+# db.drop_all()
+# db.create_all()
 
 ###############################################################################
 # Route Handlers
@@ -157,7 +158,7 @@ def index():
 def register():
     form = RegisterForm()
     if request.method == 'GET':  
-        return render_template('register.j2',form=form)
+        return render_template('join.html',form=form)
 
     user = User.query.filter_by(email=form.email.data).first()
     if form.validate() and user is None:
@@ -178,13 +179,13 @@ def register():
         flash("There's a problem with what you've entered...")
         for field, error in form.errors.items():
             flash(f"{field} - {error}")
-        return render_template('register.j2', form=form)
+        return render_template('join.html', form=form)
 
 @app.route('/login/', methods=['GET','POST'])
 def login():
     form = LoginForm()
     if request.method == 'GET':  
-        return render_template('login.j2', form=form)
+        return render_template('login.html', form=form)
     
     if form.validate_on_submit():
 
@@ -198,12 +199,12 @@ def login():
             return redirect(next)
         else:
             flash("Your login info was incorrect.")
-            return render_template('login.j2', form=form)
+            return render_template('login.html', form=form)
     else:
         for field, error in form.errors.items():
             flash("There's a problem with what you've entered...")
             flash(f"{field} - {error}")
-        return render_template('login.j2', form=form)
+        return render_template('login.html', form=form)
 
 @app.get('/logout/')
 @login_required
@@ -216,7 +217,7 @@ def logout():
 @login_required
 def lobby():
     #User can be accessed by current_user in templates
-    return render_template('lobby.j2')
+    return render_template('lobby.html')
 
 @app.route('/room/',  methods=['GET','POST'])
 @login_required

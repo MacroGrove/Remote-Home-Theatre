@@ -22,7 +22,7 @@
              <!-- Navigation -->
              <nav class="navbar navbar-light bg-primary">
                 <div class="container-fluid">
-                    <a class="navbar-brand">Remote Home Theatre</a>
+                    <a class="navbar-brand" href="/home/">Remote Home Theatre</a>
                     <form class="d-flex">
                         <a class="btn btn-light" href="/login/" role="button">Login &raquo;</a>
                         <a class="btn btn-light" href="/register/" role="button">Join &raquo;</a>
@@ -30,9 +30,24 @@
                 </div>
             </nav>
             TODO: Implement Lobby
-            <p>Welcome {{current_user.username}}</p>
+            <p>Welcome {{current_user.username}}!</p>
+                
+            {% for room in current_user.rooms %}
+            <div class="card">
+                <div class="card-header">
+                    {{ room.id }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ room.title }}</h5>
+                    {% if room.description is not null %}
+                        <p class="card-text">{{ room.description }}</p>]
+                    {% endif %}
+                    <a href="#" class="btn btn-primary">Enter</a>
+                </div>
+              </div>
+            {% endfor %}
         </main>
-        <footer>
+        <footer class="bg-primary mt-auto">
             Created by Dumbledorf Stonks ©
         </footer>
     </body>

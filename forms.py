@@ -8,14 +8,14 @@ class LoginForm(FlaskForm):
     email = EmailField("Enter email: ", validators=[InputRequired(), Email()])
     # username = StringField("Enter username: ", validators=[InputRequired()])
     password = PasswordField("Enter password: ", validators=[InputRequired()])
-    submit = SubmitField("Submit")
+    submit = SubmitField("Log In")
 
 class RegisterForm(FlaskForm):
     username = StringField("Enter username: ", validators=[InputRequired()])
     password = PasswordField("Enter password: ", validators=[InputRequired()])
     confirm_password = PasswordField("Confirm password: ", validators=[InputRequired(), EqualTo('password')])
     email = EmailField("Enter email: ", validators=[InputRequired(), Email()])
-    submit = SubmitField("Submit")
+    submit = SubmitField("Join")
 
 class InputVidForm(FlaskForm):
     video = StringField("Enter video link: ")
@@ -23,4 +23,4 @@ class InputVidForm(FlaskForm):
 
 class RoomForm(FlaskForm):
     room =  StringField("Room Code", validators=[InputRequired()])
-    submit = SubmitField("Submit")
+    submit = SubmitField("Enter")

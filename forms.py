@@ -24,3 +24,12 @@ class InputVidForm(FlaskForm):
 class RoomForm(FlaskForm):
     room =  StringField("Room Code", validators=[InputRequired()])
     submit = SubmitField("Enter")
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField("Enter new password: ", validators=[InputRequired()])
+    confirm_password = PasswordField("Confirm password: ", validators=[InputRequired(), EqualTo('password')])
+    submit = SubmitField("Submit")
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    submit = SubmitField('Request Password Reset')

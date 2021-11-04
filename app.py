@@ -4,7 +4,6 @@ Run the following two commands to install all required packages.
 python -m pip install --upgrade pip
 python -m pip install --upgrade flask-login
 """
-
 ###############################################################################
 # Imports
 ###############################################################################
@@ -14,11 +13,14 @@ from flask import Flask, render_template, url_for, redirect
 from flask import request, session, flash
 from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin
+from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
 from hasher import Hasher
-from forms import InputVidForm, LoginForm, RegisterForm, InputVidForm, RoomForm
+from forms import InputVidForm, LoginForm, RegisterForm, InputVidForm, ResetPasswordForm, RoomForm, ResetPasswordRequestForm
 from datetime import date
 import yagmail
+import jwt
+import time
+
 
 ###############################################################################
 # Basic Configuration
@@ -87,17 +89,25 @@ class User(UserMixin, db.Model):
     def verify_password(self,pwd):
         return pwd_hasher.check(pwd, self.password_hash)
 
-    def verify_email(self):
-        pass
-    
-    def is_active():
-        return True
+    def new_pwd_reset_token(self,expires_in=600):
+        return jwt.encode({'reset_password': self.id, 'exp': expires_in + time.time()},app.config['SECRET_KEY'], algorithm='HS256')
 
-    def get_id(self):
-        return self.id
-    
-    def is_authenticated(self):
-        return True
+    @staticmethod
+    def verify_reset_password(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
+
+    def send_pwd_reset_email(user):
+        token = user.new_pwd_reset_token()
+        yag.send(
+            to=user.email,
+            subject="Reset Password",
+            contents=f"""Hi,{user.email}!\n\nTo reset your password click on the link below:
+            \n\n{url_for('get_reset_password', token=token, _external=True)}. Best, The RHT Team"""
+        )
     
 
 # Create a database model for rooms
@@ -247,6 +257,51 @@ def room():
         for field, error in vidForm.errors.items():
             flash(f"{field}: {error}")
         return redirect(url_for("room"))
+
+@app.get('/reset_request/')
+def get_reset_request():
+    form = ResetPasswordRequestForm()
+    return render_template('reset_password_request.html',form=form)
+@app.post('/reset_request/')
+def post_reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            User.send_pwd_reset_email(user)
+        flash('Check your email for password reset instructions.')
+        return redirect(url_for('login'))
+    for field, error in form.errors.items():
+            flash("There's a problem with what you've entered...")
+            flash(f"{field} - {error}")
+    return render_template('reset_password_request.html', form=form)
+
+@app.route('/reset_password/<token>/', methods=['GET','POST'])
+def get_reset_password(token):
+    form = ResetPasswordForm()
+    if request.method == 'POST':
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        user = User.verify_reset_password(token)
+        if user is None:
+            return redirect(url_for('index'))
+        if form.validate():
+            # user.password = form.password.data
+            # db.session.add(user)
+            # user.set_password(form.password.data)
+            user.password = form.password.data
+            db.session.commit()
+            flash('Your password has been reset.')
+            return redirect(url_for('login'))
+        for field, error in form.errors.items():
+                flash("There's a problem with what you've entered...")
+                flash(f"{field} - {error}")
+        return render_template('reset_password.html', form=form)
+    return render_template('reset_password.html', form=form)
+
+
 
 
 

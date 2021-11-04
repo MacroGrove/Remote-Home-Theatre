@@ -6,7 +6,7 @@ Group project for Web Development Class.
 - Vimeo video streaming
 - Local media upload and streaming
 - Chat system
-- Room creation with Admin account
+- Room creation with user account
 - Guest access with room code
 
 ## Quick Setup

@@ -227,7 +227,7 @@ def register():
         yag.send(
             to=form.email.data,
             subject="Welcome!",
-            contents=f"""Hi, {form.username.data}!\nWelcome to Remote Home Theatre.\n\nBest,\n\nThe RHT Team""", 
+            contents=f"""Hi, {form.username.data}!\n\nWelcome to Remote Home Theatre.\n\nBest,\nThe RHT Team""", 
         ) #Make this message nicer.
         return redirect(url_for('login'))
 

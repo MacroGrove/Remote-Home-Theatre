@@ -161,6 +161,7 @@ db.create_all()
 @app.route('/home/', methods=['GET','POST'])
 def index():
     form = RoomForm()
+    
     if request.method == 'GET':  
         return render_template('home.html', form=form) #You can access current_user here
    
@@ -172,36 +173,12 @@ def index():
             flash(f"{field} - {error}")
         return render_template('home.html', form=form)
 
-@app.route('/register/', methods=['GET','POST'])
-def register():
-    form = RegisterForm()
-    if request.method == 'GET':  
-        return render_template('join.html',form=form)
-
-    user = User.query.filter_by(email=form.email.data).first()
-    if form.validate() and user is None:
-        #...
-        user = User(password=form.password.data, email=form.email.data, username=form.username.data, is_verified=False)
-        db.session.add(user)
-        db.session.commit()
-        yag.send(
-            to=form.email.data,
-            subject="Welcome!",
-            contents=f"""Hi, {form.username.data}!\nWelcome to Remote Home Theatre.\n\nBest,\n\nThe RHT Team""", 
-        ) #Make this message nicer.
-        return redirect(url_for('login'))
-    elif user is not None:
-        flash("This email is already associated with an account. Please choose another or log in.")
-        return redirect(url_for('login'))
-    else:
-        flash("There's a problem with what you've entered...")
-        for field, error in form.errors.items():
-            flash(f"{field} - {error}")
-        return render_template('join.html', form=form)
+# ACCOUNT ACCESS ROUTES
 
 @app.route('/login/', methods=['GET','POST'])
 def login():
     form = LoginForm()
+
     if request.method == 'GET':  
         return render_template('login.html', form=form)
     
@@ -228,19 +205,55 @@ def login():
 @login_required
 def logout():
     logout_user()
-    # Maybe flash a message???
+    flash("Sucessfully logged out.")
     return redirect(url_for('index'))
-   
+
+# ACCOUNT REGISTRATION ROUTES
+
+@app.route('/register/', methods=['GET','POST'])
+def register():
+    form = RegisterForm()
+    
+    if request.method == 'GET':  
+        return render_template('join.html',form=form)
+
+    user = User.query.filter_by(email=form.email.data).first()
+    
+    if form.validate() and user is None:
+        #...
+        user = User(password=form.password.data, email=form.email.data, username=form.username.data, is_verified=False)
+        db.session.add(user)
+        db.session.commit()
+        yag.send(
+            to=form.email.data,
+            subject="Welcome!",
+            contents=f"""Hi, {form.username.data}!\nWelcome to Remote Home Theatre.\n\nBest,\n\nThe RHT Team""", 
+        ) #Make this message nicer.
+        return redirect(url_for('login'))
+
+    elif user is not None:
+        flash("This email is already associated with an account. Please choose another or log in.")
+        return redirect(url_for('login'))
+
+    else:
+        flash("There's a problem with what you've entered...")
+        for field, error in form.errors.items():
+            flash(f"{field} - {error}")
+        return render_template('join.html', form=form)
+
+# LOBBY ROUTE
+
 @app.route('/lobby/')
 @login_required
 def lobby():
     #User can be accessed by current_user in templates
     return render_template('lobby.html')
 
+# ROOM ROUTE
+
 @app.route('/room/',  methods=['GET','POST'])
 @login_required
 def room():
-
     #User can be accessed by current_user in templates
 
     #Initialize the room???
@@ -266,21 +279,28 @@ def room():
             flash(f"{field}: {error}")
         return redirect(url_for("room"))
 
+# RESETING PASSWORD ROUTES
+
 @app.get('/reset_request/')
 def get_reset_request():
     form = ResetPasswordRequestForm()
     return render_template('reset_password_request.html',form=form)
+
 @app.post('/reset_request/')
 def post_reset_request():
+    form = ResetPasswordRequestForm()
+
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    form = ResetPasswordRequestForm()
+    
     if form.validate_on_submit():
+        
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             User.send_pwd_reset_email(user)
         flash('Check your email for password reset instructions. It might take a minute. If, after a few minutes, it still has not arrived, please check your spam folder before trying again.')
         return redirect(url_for('login'))
+
     for field, error in form.errors.items():
             flash("There's a problem with what you've entered...")
             flash(f"{field} - {error}")
@@ -289,14 +309,18 @@ def post_reset_request():
 @app.route('/reset_password/<token>/', methods=['GET','POST'])
 def get_reset_password(token):
     form = ResetPasswordForm()
+
     if request.method == 'POST':
+
         if current_user.is_authenticated:
             flash('You are already logged in')
             return redirect(url_for('index'))
+
         user = User.verify_reset_password(token)
         if user is None:
             flash('Token is invalid or has expired. Try again.')
             return redirect(url_for('index'))
+
         if form.validate():
             # user.password = form.password.data
             # db.session.add(user)
@@ -305,10 +329,12 @@ def get_reset_password(token):
             db.session.commit()
             flash('Your password has been reset.')
             return redirect(url_for('login'))
+
         for field, error in form.errors.items():
                 flash("There's a problem with what you've entered...")
                 flash(f"{field} - {error}")
         return render_template('reset_password.html', form=form)
+
     return render_template('reset_password.html', form=form)
 
 

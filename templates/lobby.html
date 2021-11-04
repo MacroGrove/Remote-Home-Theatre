@@ -46,6 +46,14 @@
                 </div>
               </div>
             {% endfor %}
+
+            {% if current_user.rooms|length < 6 %}
+            <div class="card">
+                <div class="card-body">
+                    <a href="#" class="btn btn-primary">+</a>
+                </div>
+              </div>
+            {% endif %}
         </main>
         <footer class="bg-primary mt-auto">
             Created by Dumbledorf Stonks ©

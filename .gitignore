@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+theatre.sqlite3
+theatre.sqlite3

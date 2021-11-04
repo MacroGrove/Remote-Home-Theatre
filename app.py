@@ -229,7 +229,7 @@ def register():
             subject="Welcome!",
             contents=f"""Hi, {form.username.data}!\n\nWelcome to Remote Home Theatre.\n\nBest,\nThe RHT Team""", 
         ) #Make this message nicer.
-        return redirect(url_for('login'))
+        return redirect(url_for('lobby'))
 
     elif user is not None:
         flash("This email is already associated with an account. Please choose another or log in.")

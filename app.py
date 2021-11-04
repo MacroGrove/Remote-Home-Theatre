@@ -271,7 +271,7 @@ def post_reset_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             User.send_pwd_reset_email(user)
-        flash('Check your email for password reset instructions.')
+        flash('Check your email for password reset instructions. It might take a minute. If, after a few minutes, it still has not arrived, please check your spam folder before trying again.')
         return redirect(url_for('login'))
     for field, error in form.errors.items():
             flash("There's a problem with what you've entered...")
@@ -283,9 +283,11 @@ def get_reset_password(token):
     form = ResetPasswordForm()
     if request.method == 'POST':
         if current_user.is_authenticated:
+            flash('You are already logged in')
             return redirect(url_for('index'))
         user = User.verify_reset_password(token)
         if user is None:
+            flash('Token is invalid or has expired. Try again.')
             return redirect(url_for('index'))
         if form.validate():
             # user.password = form.password.data

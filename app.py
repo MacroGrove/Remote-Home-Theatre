@@ -126,7 +126,7 @@ class Room(db.Model):
 
 # Create a database model for messages
 class Message(db.Model):
-    __tablename__ = "Messages"
+    __tablename__ = 'Messages'
     user = db.Column(db.Unicode, db.ForeignKey('Users.id'))
     room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
     id = db.Column(db.Integer, primary_key=True)
@@ -138,12 +138,20 @@ class Message(db.Model):
 
 # Create a database model for email verification codes
 class VerificationCodes(db.Model):
+    __tablename__ = 'Codes'
     user = db.Column(db.Integer, db.ForeignKey('Users.id'))
     code = db.Column(db.Unicode, primary_key=True)
 
+# Create a database model for room video queues
+class Queue(db.Model):
+    __tablename__ = 'Queues'
+    room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
+    id = db.Column(db.Integer, primary_key=True)
+    link = db.Column(db.Unicode, nullable=False)
+
 # Refresh the database to reflect these models
-# db.drop_all()
-# db.create_all()
+db.drop_all()
+db.create_all()
 
 ###############################################################################
 # Route Handlers

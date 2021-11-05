@@ -91,6 +91,17 @@ class User(UserMixin, db.Model):
 
     def new_pwd_reset_token(self,expires_in=600):
         return jwt.encode({'reset_password': self.id, 'exp': expires_in + time.time()},app.config['SECRET_KEY'], algorithm='HS256')
+    
+    def generate_confimration_token(self, expires_in=600):
+        return jwt.encode({'confirm' : self.id , 'exp' : expires_in + time.time()},app.config['SECRET_KEY'],algorithm='HS256')
+    
+    @staticmethod
+    def verify_confirmation_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],algorithms=['HS256'])['confirm']
+        except:
+            return
+        return User.query.get(id)
 
     @staticmethod
     def verify_reset_password(token):
@@ -105,8 +116,10 @@ class User(UserMixin, db.Model):
         yag.send(
             to=user.email,
             subject="Reset Password",
-            contents=f"""Hi,{user.email}!\n\nTo reset your password click on the link below:
-            \n\n{url_for('get_reset_password', token=token, _external=True)}. Best, The RHT Team"""
+            contents=f"""Hi,{user.email}!
+            \n\nTo reset your password click on the link below:
+            \n\n{url_for('get_reset_password', token=token, _external=True)}
+            \n\n Best, The RHT Team"""
         )
     
 
@@ -174,9 +187,10 @@ def index():
         return render_template('home.html', form=form)
 
 # ACCOUNT ACCESS ROUTES
-
+@app.route('/login/<token>', methods=['GET','POST'])
 @app.route('/login/', methods=['GET','POST'])
-def login():
+def login(token=None):
+
     form = LoginForm()
 
     if request.method == 'GET':  
@@ -188,6 +202,15 @@ def login():
 
         if user is not None and user.verify_password(form.password.data):
             login_user(user)
+            if not current_user.is_verified:
+                u = User.verify_confirmation_token(token)
+                if u is None:
+                    flash('Token is invalid or has expired. Try again.')
+                    logout_user()
+                    return redirect(url_for('register'))
+                else:
+                    u.is_verified = True
+                    db.session.commit()
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
                 next = url_for('index')
@@ -224,10 +247,15 @@ def register():
         user = User(password=form.password.data, email=form.email.data, username=form.username.data, is_verified=False)
         db.session.add(user)
         db.session.commit()
+        token = user.generate_confimration_token()
         yag.send(
             to=form.email.data,
             subject="Welcome!",
-            contents=f"""Hi, {form.username.data}!\n\nWelcome to Remote Home Theatre.\n\nBest,\nThe RHT Team""", 
+            contents=f"""Hi, {form.username.data}!
+            \n\nWelcome to Remote Home Theatre. Confirm your account by following the link below:
+            \n\n{url_for('login', token=token, _external=True)}
+            \n\nBest,
+            \n\nThe RHT Team""", 
         ) #Make this message nicer.
         return redirect(url_for('lobby'))
 
@@ -257,8 +285,8 @@ def room():
     #User can be accessed by current_user in templates
 
     #Initialize the room???
-    room_id = request.args.get('rid')
-    room = Room()
+    room_id = request.args.get('roomid')
+    room = Room.query.get(room_id)
 
     #Form to accept youtube link
     vidForm = InputVidForm()
@@ -322,9 +350,6 @@ def get_reset_password(token):
             return redirect(url_for('index'))
 
         if form.validate():
-            # user.password = form.password.data
-            # db.session.add(user)
-            # user.set_password(form.password.data)
             user.password = form.password.data
             db.session.commit()
             flash('Your password has been reset.')

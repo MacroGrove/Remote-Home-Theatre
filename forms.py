@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms.validators import EqualTo, InputRequired, Email
+from wtforms.validators import EqualTo, InputRequired, Email, Optional
 from wtforms.fields.core import StringField
 from wtforms.fields.html5 import EmailField
 from wtforms.fields.simple import PasswordField, SubmitField
@@ -25,6 +25,11 @@ class RoomForm(FlaskForm):
     room =  StringField("Room Code", validators=[InputRequired()])
     submit = SubmitField("Enter")
 
+class NewRoomForm(FlaskForm):
+    roomName =  StringField("Room Name", validators=[InputRequired()])
+    description = StringField("Description", validators=[Optional()])
+    submit = SubmitField("Create")
+    
 class ResetPasswordForm(FlaskForm):
     password = PasswordField("Enter new password: ", validators=[InputRequired()])
     confirm_password = PasswordField("Confirm password: ", validators=[InputRequired(), EqualTo('password')])
@@ -33,3 +38,4 @@ class ResetPasswordForm(FlaskForm):
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email()])
     submit = SubmitField('Request Password Reset')
+

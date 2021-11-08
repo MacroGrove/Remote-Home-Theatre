@@ -121,6 +121,11 @@ class User(UserMixin, db.Model):
             \n\n{url_for('get_reset_password', token=token, _external=True)}
             \n\n Best, The RHT Team"""
         )
+    @staticmethod
+    def delete_user(id):
+        User.query.filter_by(id=id).delete()
+        db.session.commit()
+
     
 
 # Create a database model for rooms
@@ -207,13 +212,14 @@ def login(token=None):
                 if u is None:
                     flash('Token is invalid or has expired. Try again.')
                     logout_user()
+                    User.delete_user(user.id)
                     return redirect(url_for('register'))
                 else:
                     u.is_verified = True
                     db.session.commit()
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
-                next = url_for('index')
+                next = url_for('lobby')
             return redirect(next)
         else:
             flash("Your login info was incorrect.")
@@ -257,7 +263,8 @@ def register():
             \n\nBest,
             \n\nThe RHT Team""", 
         ) #Make this message nicer.
-        return redirect(url_for('lobby'))
+        flash('Welcome! Check your email for a link to confirm your account.')
+        return redirect(url_for('index'))
 
     elif user is not None:
         flash("This email is already associated with an account. Please choose another or log in.")

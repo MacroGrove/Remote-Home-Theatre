@@ -15,7 +15,7 @@ from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
 from hasher import Hasher
-from forms import InputVidForm, LoginForm, RegisterForm, InputVidForm, ResetPasswordForm, RoomForm, ResetPasswordRequestForm
+from forms import InputVidForm, LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, ResetPasswordRequestForm
 from datetime import date
 import yagmail
 import jwt
@@ -296,21 +296,21 @@ def room():
     room = Room.query.get(room_id)
 
     #Form to accept youtube link
-    vidForm = InputVidForm()
+    form = VideoForm()
 
     if request.method == 'GET':        
         if "video" in session:
-            vid = session['video']
-            vid = vid.replace("watch?v=", "embed/")
-            return render_template('roomWithVid.j2', room=room, vid=vid)
+            video = session['video']
+            video = video.replace("watch?v=", "embed/")
+            return render_template('roomWithVid.j2', room=room, video=video)
         else:
-            return render_template('roomWithoutVid.j2', room=room, vidForm=vidForm)
+            return render_template('roomWithoutVid.j2', room=room, form=form)
 
-    if vidForm.validate():
-        session['video'] = vidForm.video.data
+    if VideoForm.validate():
+        session['video'] = VideoForm.video.data
         return redirect(url_for("room"))
     else:
-        for field, error in vidForm.errors.items():
+        for field, error in VideoForm.errors.items():
             flash(f"{field}: {error}")
         return redirect(url_for("room"))
 

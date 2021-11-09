@@ -17,7 +17,7 @@ class RegisterForm(FlaskForm):
     email = EmailField("Enter email: ", validators=[InputRequired(), Email()])
     submit = SubmitField("Join")
 
-class InputVidForm(FlaskForm):
+class VideoForm(FlaskForm):
     video = StringField("Enter video link: ")
     submit = SubmitField("Submit")
 

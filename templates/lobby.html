@@ -43,13 +43,15 @@
                     {{ room.id }}
                 </div>
                 <div class="card-body">
+
                     <h5 class="card-title">{{ room.title }}</h5>
+                    
+                    <p class="card-text"> Access Code: {{ room.code }} </p>
+                    
                     {% if room.description %}
-                        <p class="card-text">
-                            Access Code: {{ room.code }}
-                            {{ room.description }}
-                        </p>
+                    <p class="card-text"> {{ room.description }}</p>
                     {% endif %}
+                    
                     <a href="/room/" class="btn btn-primary">Enter</a>
                 </div>
               </div>
@@ -80,8 +82,8 @@
                                     {{ form.hidden_tag() }}
                                     <div class="row justify-content-center my-5"> 
                                         <div class="d-grid col-6">
-                                            {{ form.roomName.label(class="text-center") }}
-                                            {{ form.roomName(class="form-control") }}
+                                            {{ form.name.label(class="text-center") }}
+                                            {{ form.name(class="form-control") }}
                                         </div>
                                     </div>
                                     <div class="row justify-content-center my-5"> 

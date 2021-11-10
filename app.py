@@ -293,12 +293,12 @@ def lobby():
         if form.validate():
             #Add room to user's table
             userRooms = Room.query.filter_by(user_id=current_user.id).all()
+
             if len(userRooms) < 6:
-                # randCode = ''.join(string.ascii_letters + string.digits + string.punctuation, k = 12)
-                # code = re.compile('^[a-zA-Z0-9]{12,}$')
+                # generate access code
                 code = rstr.xeger(r'^[a-zA-Z0-9]{12,}$')
                 one_instance = Room(user_id=current_user.id,  
-                    code=code, title=form.roomName.data, description=form.description.data)
+                    code=code, title=form.name.data, description=form.description.data)
                 
                 db.session.add(one_instance)
                 db.session.commit()

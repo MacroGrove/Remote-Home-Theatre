@@ -26,7 +26,7 @@ class RoomForm(FlaskForm):
     submit = SubmitField("Enter")
 
 class NewRoomForm(FlaskForm):
-    roomName =  StringField("Room Name", validators=[InputRequired()])
+    name =  StringField("Room Name", validators=[InputRequired()])
     description = StringField("Description", validators=[Optional()])
     submit = SubmitField("Create")
 

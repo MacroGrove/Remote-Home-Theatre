@@ -12,7 +12,7 @@
             <div class="container">
                 {% for message in get_flashed_messages() %}
                     <div class="alert alert-danger" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="&times;"></button>                    </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="&times;"></button>
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -27,19 +27,19 @@
                         {% if current_user.is_authenticated %}
                         <div class="row gx-4">
                             <div class="col">
-                                <a class="btn btn-light" href="/lobby/" role="button">Lobby &raquo;</a>
+                                <a class="btn btn-light" href="/lobby/" role="button">Lobby</a>
                             </div>
                             <div class="col">
-                                <a class="btn btn-light" href="/logout/" role="button">Logout &raquo;</a>
+                                <a class="btn btn-light" href="/logout/" role="button">Logout</a>
                             </div>
                         </div>
                         {% else %}
                         <div class="row gx-4">
                             <div class="col">
-                                <a class="btn btn-light" href="/login/" role="button">Login &raquo;</a>
+                                <a class="btn btn-light" href="/login/" role="button">Login</a>
                             </div>
                             <div class="col">
-                                <a class="btn btn-light" href="/register/" role="button">Join &raquo;</a>
+                                <a class="btn btn-light" href="/register/" role="button">Join</a>
                             </div>
                         </div>
                         {% endif %}

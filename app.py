@@ -334,11 +334,11 @@ def room():
         else:
             return render_template('roomWithoutVid.j2', room=room, form=form)
 
-    if VideoForm.validate():
-        session['video'] = VideoForm.video.data
+    if form.validate():
+        session['video'] = form.video.data
         return redirect(url_for("room"))
     else:
-        for field, error in VideoForm.errors.items():
+        for field, error in form.errors.items():
             flash(f"{field}: {error}")
         return redirect(url_for("room"))
 

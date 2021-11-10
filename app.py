@@ -122,6 +122,7 @@ class User(UserMixin, db.Model):
             \n\n{url_for('get_reset_password', token=token, _external=True)}
             \n\n Best, The RHT Team"""
         )
+        
     @staticmethod
     def delete_user(id):
         User.query.filter_by(id=id).delete()

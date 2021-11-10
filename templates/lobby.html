@@ -33,7 +33,7 @@
                     </form>
                 </div>
             </nav>
-            TODO: Implement Lobby
+
             <p>Welcome {{current_user.username}}!</p>
                 
             {% for room in current_user.rooms %}
@@ -44,7 +44,10 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ room.title }}</h5>
                     {% if room.description %}
-                        <p class="card-text">{{ room.description }}</p>]
+                        <p class="card-text">
+                            Access Code: {{ room.code }}
+                            {{ room.description }}
+                        </p>
                     {% endif %}
                     <a href="/room/" class="btn btn-primary">Enter</a>
                 </div>

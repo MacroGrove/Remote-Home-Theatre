@@ -316,7 +316,6 @@ def lobby():
 # ROOM ROUTE
 
 @app.route('/room/',  methods=['GET','POST'])
-@login_required
 def room():
     #User can be accessed by current_user in templates
 

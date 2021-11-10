@@ -25,11 +25,12 @@
                     <a class="navbar-brand" href="/home/">Remote Home Theatre</a>
                     <form class="d-flex">
                         {% if current_user.is_authenticated %}
+                        <a class="btn btn-light" href="/lobby/" role="button">Lobby &raquo;</a>
                         <a class="btn btn-light" href="/logout/" role="button">Logout &raquo;</a>
                         {% else %}
                         <a class="btn btn-light" href="/login/" role="button">Login &raquo;</a>
-                        {% endif %}
                         <a class="btn btn-light" href="/register/" role="button">Join &raquo;</a>
+                        {% endif %}
                     </form>
                 </div>
             </nav>

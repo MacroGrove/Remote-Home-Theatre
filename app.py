@@ -122,7 +122,7 @@ class User(UserMixin, db.Model):
             \n\n{url_for('get_reset_password', token=token, _external=True)}
             \n\n Best, The RHT Team"""
         )
-        
+
     @staticmethod
     def delete_user(id):
         User.query.filter_by(id=id).delete()
@@ -298,7 +298,7 @@ def lobby():
                 # code = re.compile('^[a-zA-Z0-9]{12,}$')
                 code = rstr.xeger(r'^[a-zA-Z0-9]{12,}$')
                 one_instance = Room(user_id=current_user.id,  
-                    code=code, title=form.roomName.data, description = form.description.data)
+                    code=code, title=form.roomName.data, description=form.description.data)
                 
                 db.session.add(one_instance)
                 db.session.commit()

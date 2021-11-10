@@ -25,40 +25,57 @@
                     <a class="navbar-brand" href="/home/">Remote Home Theatre</a>
                     <form class="d-flex">
                         {% if current_user.is_authenticated %}
-                        <a class="btn btn-light" href="/logout/" role="button">Logout &raquo;</a>
+                        <div class="row gx-4">
+                            <div class="col">
+                                <a class="btn btn-light" href="/lobby/" role="button">Lobby &raquo;</a>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-light" href="/logout/" role="button">Logout &raquo;</a>
+                            </div>
+                        </div>
                         {% else %}
-                        <a class="btn btn-light" href="/login/" role="button">Login &raquo;</a>
+                        <div class="row gx-4">
+                            <div class="col">
+                                <a class="btn btn-light" href="/login/" role="button">Login &raquo;</a>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-light" href="/register/" role="button">Join &raquo;</a>
+                            </div>
+                        </div>
                         {% endif %}
-                        <a class="btn btn-light" href="/register/" role="button">Join &raquo;</a>
                     </form>
                 </div>
             </nav>
 
             <!-- Log In Form -->
             <div class="container-fluid">
-                <form method="post">
+                <form method="post" class="mx-auto my-5 w-50">
                     <div class="form-group">
                         {{ form.hidden_tag() }}
-                        <div class="row justify-content-center my-5"> 
+                        <div class="row justify-content-center my-4"> 
                             <div class="d-grid col-6">
                                 {{ form.email.label(class="text-center") }}
                                 {{ form.email(class="form-control") }}
                             </div>
                         </div>
-                        <div class="row justify-content-center my-5"> 
+                        <div class="row justify-content-center my-4"> 
                             <div class="d-grid col-6">
                                 {{ form.password.label(class="text-center") }}
                                 {{ form.password(class="form-control") }}
                             </div>
                         </div>
-                        <div class="row justify-content-center my-5"> 
+                        <div class="row justify-content-center my-4"> 
                             <div class="d-grid col-6">
                                 {{ form.submit(class="btn btn-primary") }}
                             </div>
                         </div>
+                        <div class="row justify-content-center my-4">
+                            <div class="d-grid col-6">
+                                <a href="{{url_for('get_reset_request')}}" class="link-primary">Forgot Password?</a>
+                            </div>
+                        </div>
                     </div>
                 </form>
-                <a href="{{url_for('get_reset_request')}}" class="link-primary">Forgot Password?</a>
             </div>
         </main>
         <footer class="bg-primary mt-auto">

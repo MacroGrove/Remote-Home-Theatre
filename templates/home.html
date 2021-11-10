@@ -25,11 +25,23 @@
                     <a class="navbar-brand">Remote Home Theatre</a>
                     <form class="d-flex">
                         {% if current_user.is_authenticated %}
-                        <a class="btn btn-light" href="/lobby/" role="button">Lobby &raquo;</a>
-                        <a class="btn btn-light" href="/logout/" role="button">Logout &raquo;</a>
+                        <div class="row gx-4">
+                            <div class="col">
+                                <a class="btn btn-light" href="/lobby/" role="button">Lobby &raquo;</a>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-light" href="/logout/" role="button">Logout &raquo;</a>
+                            </div>
+                        </div>
                         {% else %}
-                        <a class="btn btn-light" href="/login/" role="button">Login &raquo;</a>
-                        <a class="btn btn-light" href="/register/" role="button">Join &raquo;</a>
+                        <div class="row gx-4">
+                            <div class="col">
+                                <a class="btn btn-light" href="/login/" role="button">Login &raquo;</a>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-light" href="/register/" role="button">Join &raquo;</a>
+                            </div>
+                        </div>
                         {% endif %}
                     </form>
                 </div>

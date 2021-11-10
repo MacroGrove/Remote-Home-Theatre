@@ -54,10 +54,50 @@
             {% if current_user.rooms|length < 6 %}
             <div class="card">
                 <div class="card-body">
-                    <a href="#" class="btn btn-primary">+</a>
+                    <!-- Button Trigger Modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomForm">
+                        +
+                    </button>
                 </div>
               </div>
             {% endif %}
+
+             <!-- Modal -->
+             <div class="modal fade" id="createRoomForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Create Room</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Submit"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post">
+                                <div class="form-group">
+                                    {{ form.hidden_tag() }}
+                                    <div class="row justify-content-center my-5"> 
+                                        <div class="d-grid col-6">
+                                            {{ form.roomName.label(class="text-center") }}
+                                            {{ form.roomName(class="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center my-5"> 
+                                        <div class="d-grid col-6">
+                                            {{ form.description.label(class="text-center") }}
+                                            {{ form.description(class="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center my-5"> 
+                                        <div class="d-grid col-6">
+                                            {{ form.submit(class="btn btn-primary", method="get") }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
         <footer class="bg-primary mt-auto">
             Created by Dumbledorf Stonks ©

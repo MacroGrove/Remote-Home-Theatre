@@ -15,7 +15,7 @@ from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
 from hasher import Hasher
-from forms import InputVidForm, LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, ResetPasswordRequestForm
+from forms import LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm
 from datetime import date
 import yagmail
 import jwt
@@ -282,12 +282,39 @@ def register():
 @login_required
 def lobby():
     #User can be accessed by current_user in templates
-    return render_template('lobby.html')
+    form = NewRoomForm()
+
+    if request.method == 'GET':  
+        return render_template('lobby.html', form=form) #You can access current_user here
+    
+    if request.method == 'POST':
+        if form.validate():
+            #Add room to user's table
+            userRooms = Room.query.filter_by(user_id=current_user.id).all()
+            if len(userRooms) < 6:
+                # randCode = ''.join(string.ascii_letters + string.digits + string.punctuation, k = 12)
+                # code = re.compile('^[a-zA-Z0-9]{12,}$')
+                code = rstr.xeger(r'^[a-zA-Z0-9]{12,}$')
+                one_instance = Room(user_id=current_user.id,  
+                    code=code, title=form.roomName.data, description = form.description.data)
+                
+                db.session.add(one_instance)
+                db.session.commit()
+                
+                return redirect('/lobby/')
+            else: 
+                flash("You have too many rooms to add another")
+                return render_template('lobby.html', form=form)
+        else: 
+            flash("You have to name your room and give it a description")
+            for field, error in form.errors.items():
+                flash(f"{field} - {error}")
+            return render_template('lobby.html', form=form)
 
 # ROOM ROUTE
 
 @app.route('/room/',  methods=['GET','POST'])
-@login_required
+# @login_required
 def room():
     #User can be accessed by current_user in templates
 

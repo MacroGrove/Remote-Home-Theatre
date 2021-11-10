@@ -20,6 +20,7 @@ from datetime import date
 import yagmail
 import jwt
 import time
+import rstr
 
 
 ###############################################################################
@@ -116,7 +117,7 @@ class User(UserMixin, db.Model):
         yag.send(
             to=user.email,
             subject="Reset Password",
-            contents=f"""Hi,{user.email}!
+            contents=f"""Hi, {user.email}!
             \n\nTo reset your password click on the link below:
             \n\n{url_for('get_reset_password', token=token, _external=True)}
             \n\n Best, The RHT Team"""
@@ -278,7 +279,7 @@ def register():
 
 # LOBBY ROUTE
 
-@app.route('/lobby/')
+@app.route('/lobby/', methods=['GET', 'POST'])
 @login_required
 def lobby():
     #User can be accessed by current_user in templates
@@ -314,7 +315,7 @@ def lobby():
 # ROOM ROUTE
 
 @app.route('/room/',  methods=['GET','POST'])
-# @login_required
+@login_required
 def room():
     #User can be accessed by current_user in templates
 

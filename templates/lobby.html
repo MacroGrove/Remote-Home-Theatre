@@ -43,10 +43,10 @@
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ room.title }}</h5>
-                    {% if room.description is not null %}
+                    {% if room.description %}
                         <p class="card-text">{{ room.description }}</p>]
                     {% endif %}
-                    <a href="#" class="btn btn-primary">Enter</a>
+                    <a href="/room/" class="btn btn-primary">Enter</a>
                 </div>
               </div>
             {% endfor %}
@@ -59,11 +59,11 @@
                         +
                     </button>
                 </div>
-              </div>
+            </div>
             {% endif %}
 
-             <!-- Modal -->
-             <div class="modal fade" id="createRoomForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <!-- Modal -->
+            <div class="modal fade" id="createRoomForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">

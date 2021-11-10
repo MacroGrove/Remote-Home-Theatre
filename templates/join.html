@@ -22,21 +22,23 @@
             <!-- Navigation -->
             <nav class="navbar navbar-light bg-primary">
                 <a class="navbar-brand" href="/home/">Remote Home Theatre</a>
-                {% if current_user.is_authenticated %}
-                    <div class="nav-link">
-                        <a class="btn btn-light" href="/lobby/" role="button">Lobby</a>
-                    </div>
-                    <div class="nav-link">
-                        <a class="btn btn-light" href="/logout/" role="button">Logout</a>
-                    </div>
-                {% else %}
-                    <div class="nav-link">
-                        <a class="btn btn-light" href="/login/" role="button">Login</a>
-                    </div>
-                    <div class="nav-link">
-                        <a class="btn btn-light" href="/register/" role="button">Join</a>
-                    </div>
-                {% endif %}
+                <div class="d-flex justify-content-end">
+                    {% if current_user.is_authenticated %}
+                        <div class="nav-link">
+                            <a class="btn btn-light" href="/lobby/" role="button">Lobby</a>
+                        </div>
+                        <div class="nav-link">
+                            <a class="btn btn-light" href="/logout/" role="button">Logout</a>
+                        </div>
+                    {% else %}
+                        <div class="nav-link">
+                            <a class="btn btn-light" href="/login/" role="button">Login</a>
+                        </div>
+                        <div class="nav-link">
+                            <a class="btn btn-light" href="/register/" role="button">Join</a>
+                        </div>
+                    {% endif %}
+                </div>
             </nav>
 
             <!-- Join Form -->

@@ -329,12 +329,21 @@ def room():
     if request.method == 'GET':        
         if "video" in session:
             video = session['video']
-            video = video.replace("watch?v=", "embed/")
+            if 'youtube' in video:
+                video = video.replace("watch?v=", "embed/")
+            elif 'vimeo' in video:
+                video = video.replace("vimeo.com","player.vimeo.com/video")
+            else:
+                flash('Somethng went wrong.')
+                return redirect(url_for('room'))
             return render_template('roomWithVid.j2', room=room, video=video)
         else:
             return render_template('roomWithoutVid.j2', room=room, form=form)
 
     if form.validate():
+        if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
+            flash('The url was invalid.')
+            return redirect(url_for('room'))
         session['video'] = form.video.data
         return redirect(url_for("room"))
     else:
@@ -346,6 +355,9 @@ def room():
 
 @app.get('/reset_request/')
 def get_reset_request():
+    if current_user.is_anonymous:
+        flash('You never validated your account. Check your email for a link to validate your account or try registering again.')
+        return redirect(url_for('index'))
     form = ResetPasswordRequestForm()
     return render_template('reset_password_request.html',form=form)
 
@@ -355,6 +367,9 @@ def post_reset_request():
 
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+    
+    if not current_user.is_verified:
+        flash('Your account was never validated. Please sign up again.')
     
     if form.validate_on_submit():
         

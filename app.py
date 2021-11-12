@@ -22,7 +22,6 @@ import jwt
 import time
 import rstr
 
-
 ###############################################################################
 # Basic Configuration
 ###############################################################################
@@ -127,8 +126,6 @@ class User(UserMixin, db.Model):
     def delete_user(id):
         User.query.filter_by(id=id).delete()
         db.session.commit()
-
-    
 
 # Create a database model for rooms
 class Room(db.Model):
@@ -322,6 +319,7 @@ def room():
     #Initialize the room???
     room_id = request.args.get('roomid')
     room = Room.query.get(room_id)
+    q = Queue.query.filter_by(room_id).first()
 
     #Form to accept youtube link
     form = VideoForm()
@@ -355,9 +353,9 @@ def room():
 
 @app.get('/reset_request/')
 def get_reset_request():
-    if current_user.is_anonymous:
-        flash('You never validated your account. Check your email for a link to validate your account or try registering again.')
-        return redirect(url_for('index'))
+    # if current_user.is_anonymous:
+    #     flash('You never validated your account. Check your email for a link to validate your account or try registering again.')
+    #     return redirect(url_for('index'))
     form = ResetPasswordRequestForm()
     return render_template('reset_password_request.html',form=form)
 

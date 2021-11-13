@@ -372,6 +372,12 @@ def post_reset_request():
     if form.validate_on_submit():
         
         user = User.query.filter_by(email=form.email.data).first()
+        if not user:
+            flash('You do not have an account. Please register.')
+            return redirect('register')
+        if not user.is_verified:
+            flash('Your account was never validated. Please sign up again.')
+            return redirect(url_for('register'))
         if user:
             User.send_pwd_reset_email(user)
         flash('Check your email for password reset instructions. It might take a minute. If, after a few minutes, it still has not arrived, please check your spam folder before trying again.')

@@ -319,7 +319,7 @@ def room():
     #Initialize the room???
     room_id = request.args.get('roomid')
     room = Room.query.get(room_id)
-    q = Queue.query.filter_by(room_id).first()
+    # q = Queue.query.filter_by(room_id).first()
 
     #Form to accept youtube link
     form = VideoForm()

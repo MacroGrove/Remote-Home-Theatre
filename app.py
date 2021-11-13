@@ -366,8 +366,8 @@ def post_reset_request():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     
-    if not current_user.is_verified:
-        flash('Your account was never validated. Please sign up again.')
+    # if not current_user.is_verified:
+    #     flash('Your account was never validated. Please sign up again.')
     
     if form.validate_on_submit():
         

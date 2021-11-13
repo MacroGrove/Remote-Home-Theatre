@@ -21,8 +21,7 @@ import yagmail
 import jwt
 import time
 import rstr
-from sqlalchemy.ext.mutable import MutableList
-from sqlalchemy import PickleType
+
 
 ###############################################################################
 # Basic Configuration
@@ -166,8 +165,8 @@ class Queue(db.Model):
     __tablename__ = 'Queues'
     room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
     id = db.Column(db.Integer, primary_key=True)
-    queueList = db.Column(MutableList.as_mutable(pickleType))
-    link = db.Column(db.Unicode, nullable=False)
+    url = db.Column(db.Unicode, nullable=False)
+
 
 # Refresh the database to reflect these models
 db.drop_all()
@@ -327,25 +326,31 @@ def room():
     #Form to accept youtube link
     form = VideoForm()
 
-    if request.method == 'GET':        
+    if request.method == 'GET':  
         if "video" in session:
+
             video = session['video']
             if 'youtube' in video:
                 video = video.replace("watch?v=", "embed/")
             elif 'vimeo' in video:
                 video = video.replace("vimeo.com","player.vimeo.com/video")
             else:
-                flash('Somethng went wrong.')
+                flash('Something went wrong.')
                 return redirect(url_for('room'))
-            return render_template('roomWithVid.j2', room=room, video=video)
+            return render_template('room.html', room=room, video=video, form=form)
         else:
-            return render_template('roomWithoutVid.j2', room=room, form=form)
+            return render_template('room.html', room=room, form=form)
 
     if form.validate():
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
             return redirect(url_for('room'))
         session['video'] = form.video.data
+        
+        one_instance = Queue(url=form.video.data, room=room_id)
+        db.session.add(one_instance)
+        db.session.commit()
+
         return redirect(url_for("room"))
     else:
         for field, error in form.errors.items():

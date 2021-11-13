@@ -21,6 +21,8 @@ import yagmail
 import jwt
 import time
 import rstr
+from sqlalchemy.ext.mutable import MutableList
+from sqlalchemy import PickleType
 
 ###############################################################################
 # Basic Configuration
@@ -164,6 +166,7 @@ class Queue(db.Model):
     __tablename__ = 'Queues'
     room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
     id = db.Column(db.Integer, primary_key=True)
+    queueList = db.Column(MutableList.as_mutable(pickleType))
     link = db.Column(db.Unicode, nullable=False)
 
 # Refresh the database to reflect these models

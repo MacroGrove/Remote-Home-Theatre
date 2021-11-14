@@ -51,7 +51,6 @@
 
             <div class="container">
                 <div class="row align-items-start">
-                    <!-- Video -->
                     <div class="col">                       
                         <!-- Link Input -->
                         <form method="POST">
@@ -63,7 +62,11 @@
                         </form>
                         
                         <!-- Video  -->
+                        {% if "youtube" in video %}
                         <iframe width="854" height="480" src="{{video}}"></iframe>
+                        {% else %}
+                        <iframe src="{{video}}" width="854" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                        {% endif %}
                     </div>
     
                     <!-- Chat and Queue -->

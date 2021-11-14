@@ -176,8 +176,8 @@ class Queue(db.Model):
 
 
 # Refresh the database to reflect these models
-# db.drop_all()
-# db.create_all()
+db.drop_all()
+db.create_all()
 
 ###############################################################################
 # Route Handlers

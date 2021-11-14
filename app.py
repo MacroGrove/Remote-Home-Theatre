@@ -14,7 +14,7 @@ from flask import request, session, flash
 from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, join_room, leave_room, send
 import socketio
 from hasher import Hasher
 from forms import LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm
@@ -51,6 +51,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Getting the database object handle from the app
 db = SQLAlchemy(app)
 socketio = SocketIO(app)
+socketio = SocketIO(logger=True, engineio_logger=True) # for DEBUG 
+
+if __name__ == '__main__':
+    socketio.run(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -172,8 +176,8 @@ class Queue(db.Model):
 
 
 # Refresh the database to reflect these models
-db.drop_all()
-db.create_all()
+# db.drop_all()
+# db.create_all()
 
 ###############################################################################
 # Route Handlers
@@ -428,11 +432,34 @@ def get_reset_password(token):
     return render_template('reset_password.html', form=form)
 
 
+###############################################################################
+# Socket IO Methods
+###############################################################################
 
+@socketio.on('join')
+def on_join(data):
+    username = data['username']
+    room = data['room']
+    join_room(room)
+    send(username + ' has entered the room.', to=room)
 
+@socketio.on('leave')
+def on_leave(data):
+    username = data['username']
+    room = data['room']
+    leave_room(room)
+    send(username + ' has left the room.', to=room)
 
+# SOCKETIO ERROR HANDLING
 
-    
+@socketio.on_error()        # Handles the default namespace
+def error_handler(e):
+    pass
 
-    
+@socketio.on_error('/chat') # handles the '/chat' namespace
+def error_handler_chat(e):
+    pass
 
+@socketio.on_error_default  # handles all namespaces without an explicit error handler
+def default_error_handler(e):
+    pass

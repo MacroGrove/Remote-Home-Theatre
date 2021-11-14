@@ -14,6 +14,8 @@ from flask import request, session, flash
 from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
+from flask_socketio import SocketIO
+import socketio
 from hasher import Hasher
 from forms import LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm
 from datetime import date
@@ -48,6 +50,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Getting the database object handle from the app
 db = SQLAlchemy(app)
+socketio = SocketIO(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)

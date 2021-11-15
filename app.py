@@ -346,7 +346,7 @@ def room():
                 return redirect(url_for('room'))
             return render_template('room.html', room=room, video=video, form=form)
         else:
-            return render_template('room.html', room=room, form=form)
+            return render_template('room.html', room=room, video="", form=form)
 
     if form.validate():
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
@@ -435,6 +435,8 @@ def get_reset_password(token):
 ###############################################################################
 # Socket IO Methods
 ###############################################################################
+
+# SOCKET METHODS
 
 @socketio.on('join')
 def on_join(data):

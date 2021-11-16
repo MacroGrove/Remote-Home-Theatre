@@ -51,7 +51,8 @@
 
             <div class="container">
                 <div class="row align-items-start">
-                    <div class="col">                       
+                    <div class="col">  
+                        {% if not current_user.is_anonymous %}                     
                         <!-- Link Input -->
                         <form method="POST">
                             {{ form.hidden_tag() }}
@@ -60,6 +61,7 @@
 
                             {{ form.submit() }}
                         </form>
+                        {% endif %}
                         
                         <!-- Video  -->
                         {% if "youtube" in video %}

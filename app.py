@@ -183,7 +183,7 @@ db.create_all()
 # Route Handlers
 ###############################################################################
 
-@app.route('/')
+@app.route('/', methods=['GET','POST'])
 @app.route('/home/', methods=['GET','POST'])
 def index():
     form = RoomForm()

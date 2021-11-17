@@ -15,9 +15,10 @@ from flask import jsonify
 from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
+from wtforms.fields.core import Label
 from hasher import Hasher
 from forms import LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm
-from datetime import date
+from datetime import datetime
 import yagmail
 import jwt
 import time
@@ -155,7 +156,7 @@ class Message(db.Model):
     user = db.Column(db.Unicode, db.ForeignKey('Users.id'))
     room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
     id = db.Column(db.Integer, primary_key=True)
-    time = db.Column(db.DateTime, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False)
     message = db.Column(db.Unicode, nullable=False)
 
     def to_json(self):
@@ -163,7 +164,7 @@ class Message(db.Model):
             "user": self.user,
             "room": self.room,
             "id": self.id,
-            "time": self.time.isoformat(),
+            "timestamp": self.timestamp.isoformat(),
             "message": self.message
         }
 
@@ -335,6 +336,7 @@ def room():
     #Initialize the room???
     room_id = request.args.get('roomid')
     room = Room.query.get(room_id)
+    
     # q = Queue.query.filter_by(room_id).first()
 
     #Form to accept youtube link
@@ -437,3 +439,25 @@ def get_reset_password(token):
         return render_template('reset_password.html', form=form)
 
     return render_template('reset_password.html', form=form)
+
+@app.get("/api/v1/messages/<int:room_id>/")
+def get_messages(room_id):
+    room = Message.query.get_or_404(room_id)
+
+    messages = sorted(room.messages, key=lambda message: message.timestamp)
+    json_messages = []
+
+    for message in messages:
+        json_messages.append(message.to_json())
+    
+    return jsonify({
+        'timestamp': datetime.utcnow().isoformat(),
+        'message': json_messages
+    })
+
+@app.post("/api/v1/messages/<int:room_id>/")
+def post_message(room_id):
+    message = Message.from_json(request.get_json())
+    db.session.add(message)
+    db.session.commit()
+    return jsonify(message.to_json()), 201

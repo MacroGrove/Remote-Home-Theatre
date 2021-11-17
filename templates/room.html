@@ -13,7 +13,7 @@
             <div class="container">
                 {% for message in get_flashed_messages() %}
                     <div class="alert alert-danger" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="&times;"></button>                    </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="&times;"></button>
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -83,8 +83,11 @@
                             </div>
 
                             <div class="tab-pane fade" id="chat" role="tabpanel" aria-labelledby="chat-tab">
-                                <textarea id="chat" class="col"></textarea>
+                                <div id="message-list"></div>
+                                
+                                <input id="roomID" type="hidden" value={{room.id}}>
                                 <input id="text" class="col" placeholder="Message">
+                                <button id="message-button" type="button" class="btn btn-primary">Send</button>
                             </div>
                         </div>
                     </div>

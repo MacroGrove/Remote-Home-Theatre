@@ -141,6 +141,7 @@ class Room(db.Model):
     code = db.Column(db.Unicode, unique=True, nullable=False)
     title = db.Column(db.Unicode, nullable=False)
     description = db.Column(db.Unicode)
+    url = db.Column(db.Unicode)
 
     def __str__(self):
         return f"Room {self.id} - {self.name})"

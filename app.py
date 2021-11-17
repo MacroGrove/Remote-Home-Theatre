@@ -342,7 +342,7 @@ def room(roomCode):
     form = VideoForm()
 
     if request.method == 'GET':  
-        if curr_room.url.isempty():
+        if curr_room.url != "":
             video = curr_room.url
             if 'youtube' in video:
                 video = video.replace("watch?v=", "embed/")
@@ -350,17 +350,17 @@ def room(roomCode):
                 video = video.replace("vimeo.com","player.vimeo.com/video")
             else:
                 flash('Something went wrong.')
-                return redirect(url_for('room'))
-            return render_template('room.html', curr_room=curr_room, video=video, form=form)
+                return redirect(url_for('room/{roomCode}'))
+            return render_template('room.html', room=curr_room, video=video, form=form)
         else:
-            return render_template('room.html', curr_room=curr_room, video="", form=form)
+            return render_template('room.html', room=curr_room, video="", form=form)
 
     if form.validate():
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
-            return redirect(url_for('room'))
+            return redirect(url_for('room/{roomCode}'))
         
-        one_instance = Queue(url=form.video.data, room=room_id)
+        one_instance = Queue(url=form.video.data, room=roomCode)
         db.session.add(one_instance)
         db.session.commit()
 

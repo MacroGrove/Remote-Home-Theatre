@@ -143,10 +143,15 @@ class Room(db.Model):
     description = db.Column(db.Unicode)
     url = db.Column(db.Unicode)
 
-    def __str__(self):
-        return f"Room {self.id} - {self.name})"
-    def __repr__(self): 
-        return f"Room({self.id})"
+    def to_json(self):
+        return {
+            "user_id": self.user_id,
+            "id": self.id,
+            "code": self.code,
+            "title": self.title,
+            "description": self.description,
+            "url": self.url
+        }
 
 # Create a database model for messages
 class Message(db.Model):
@@ -157,14 +162,14 @@ class Message(db.Model):
     time = db.Column(db.DateTime, nullable=False)
     message = db.Column(db.Unicode, nullable=False)
 
-    def __str__(self):
-        return f"{self.message}"
-
-# Create a database model for email verification codes
-class VerificationCodes(db.Model):
-    __tablename__ = 'Codes'
-    user = db.Column(db.Integer, db.ForeignKey('Users.id'))
-    code = db.Column(db.Unicode, primary_key=True)
+    def to_json(self):
+        return {
+            "user": self.user,
+            "room": self.room,
+            "id": self.id,
+            "time": self.time.isoformat(),
+            "message": self.message
+        }
 
 # Create a database model for room video queues
 class Queue(db.Model):
@@ -172,6 +177,13 @@ class Queue(db.Model):
     room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.Unicode, nullable=False)
+
+    def to_json(self):
+        return {
+            "room": self.room,
+            "id": self.id,
+            "url": self.url
+        }
 
 
 # Refresh the database to reflect these models

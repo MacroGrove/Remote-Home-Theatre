@@ -15,8 +15,6 @@ from flask import jsonify
 from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
-from flask_socketio import SocketIO, join_room, leave_room, send, emit
-import socketio
 from hasher import Hasher
 from forms import LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm
 from datetime import date
@@ -51,8 +49,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Getting the database object handle from the app
 db = SQLAlchemy(app)
-socketio = SocketIO(app)
-socketio = SocketIO(logger=True, engineio_logger=True) # for DEBUG 
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -441,71 +437,3 @@ def get_reset_password(token):
         return render_template('reset_password.html', form=form)
 
     return render_template('reset_password.html', form=form)
-
-
-###############################################################################
-# Socket IO Methods
-###############################################################################
-
-# SOCKET METHODS
-
-# @socketio.on('join')
-# def on_join(data):
-#     username = data['username']
-#     room = data['room']
-#     join_room(room)
-#     send(username + ' has entered the room.', to=room)
-
-# @socketio.on('leave')
-# def on_leave(data):
-#     username = data['username']
-#     room = data['room']
-#     leave_room(room)
-#     send(username + ' has left the room.', to=room)
-
-# SOCKETIO ERROR HANDLING
-
-# @socketio.on_error()        # Handles the default  
-# def error_handler(e):
-#     pass
-
-# @socketio.on_error('/chat') # handles the '/chat' namespace
-# def error_handler_chat(e):
-#     pass
-
-# @socketio.on_error_default  # handles all namespaces without an explicit error handler
-# def default_error_handler(e):
-#     pass
-
-@socketio.on('connect')
-def test_connect():
-    emit('after connect', {'data':'Connected! Celebrate! Yay!'})
-
-# https://github.com/miguelgrinberg/Flask-SocketIO-Chat/blob/master/app/main/events.py
-@socketio.on('joined', namespace='/chat')
-def joined(message):
-    """Sent by clients when they enter a room.
-    A status message is broadcast to all people in the room."""
-    room = session.get('room')
-    join_room(room)
-    emit('status', {'msg': session.get('name') + ' has entered the room.'}, room=room)
-
-
-@socketio.on('text', namespace='/chat')
-def text(message):
-    """Sent by a client when the user entered a new message.
-    The message is sent to all people in the room."""
-    room = session.get('room')
-    emit('message', {'msg': session.get('name') + ':' + message['msg']}, room=room)
-
-
-@socketio.on('left', namespace='/chat')
-def left(message):
-    """Sent by clients when they leave a room.
-    A status message is broadcast to all people in the room."""
-    room = session.get('room')
-    leave_room(room)
-    emit('status', {'msg': session.get('name') + ' has left the room.'}, room=room)
-
-if __name__ == '__main__':
-    socketio.run(app, debug=True)

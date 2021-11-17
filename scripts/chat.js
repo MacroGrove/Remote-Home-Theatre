@@ -2,12 +2,16 @@ window.addEventListener("DOMContentLoaded", function() {
 	
 });
 
-// join chat
+// load messages from database
+async function loadMessages() {
 
-// send message
+}
 
-// leave chat
+async function displayMessage() {
 
-// poll
+}
 
-// autoscrolling
+// send message to database
+async function storeMessage() {
+
+}

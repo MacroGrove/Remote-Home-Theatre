@@ -78,7 +78,11 @@
                         <div class="tab-content" id="myTabContent">
                             
                             <div class="tab-pane fade show active" id="queue" role="tabpanel" aria-labelledby="queue-tab">
-                                QUEUE
+                                <div id="queue-list"></div>
+                                
+                                <input id="roomID" type="hidden" value={{room.id}}>
+                                <input id="text" class="col" placeholder="URL">
+                                <button id="queue-button" type="button" class="btn btn-primary">Submit</button>
                                 
                             </div>
 

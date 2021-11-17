@@ -138,7 +138,7 @@ class Room(db.Model):
     code = db.Column(db.Unicode, unique=True, nullable=False)
     title = db.Column(db.Unicode, nullable=False)
     description = db.Column(db.Unicode)
-    url = db.Column(db.Unicode)
+    url = db.Column(db.Unicode, default="", nullable=True)
 
     def to_json(self):
         return {
@@ -200,7 +200,7 @@ def index():
         return render_template('home.html', form=form) #You can access current_user here
    
     if form.validate():
-        return redirect(f'/room/?roomid={form.room.data}')
+        return redirect(f'/room/{form.room.data}/')
     else:
         flash("That room does not exist")
         for field, error in form.errors.items():
@@ -329,23 +329,21 @@ def lobby():
 
 # ROOM ROUTE
 
-@app.route('/room/',  methods=['GET','POST'])
-def room():
+# @app.route('/room/',  methods=['GET','POST'])
+@app.route('/room/<string:roomCode>/',  methods=['GET','POST'])
+def room(roomCode):
     #User can be accessed by current_user in templates
 
     #Initialize the room???
-    room_id = request.args.get('roomid')
-    room = Room.query.get(room_id)
     
-    # q = Queue.query.filter_by(room_id).first()
+    curr_room = Room.query.filter_by(code=roomCode).first()
 
     #Form to accept youtube link
     form = VideoForm()
 
     if request.method == 'GET':  
-        if "video" in session:
-
-            video = session['video']
+        if curr_room.url.isempty():
+            video = curr_room.url
             if 'youtube' in video:
                 video = video.replace("watch?v=", "embed/")
             elif 'vimeo' in video:
@@ -353,15 +351,14 @@ def room():
             else:
                 flash('Something went wrong.')
                 return redirect(url_for('room'))
-            return render_template('room.html', room=room, video=video, form=form)
+            return render_template('room.html', curr_room=curr_room, video=video, form=form)
         else:
-            return render_template('room.html', room=room, video="", form=form)
+            return render_template('room.html', curr_room=curr_room, video="", form=form)
 
     if form.validate():
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
             return redirect(url_for('room'))
-        session['video'] = form.video.data
         
         one_instance = Queue(url=form.video.data, room=room_id)
         db.session.add(one_instance)
@@ -461,3 +458,25 @@ def post_message(room_id):
     db.session.add(message)
     db.session.commit()
     return jsonify(message.to_json()), 201
+
+@app.get("/api/v1/queue/<int:room_id>/")
+def get_queue(room_id):
+    room = Queue.query.get_or_404(room_id)
+
+    queue = sorted(room.queue, key=lambda queueVideo: queueVideo.timestamp)
+    json_queue = []
+
+    for queueVideo in queue:
+        json_queue.append(message.to_json())
+    
+    return jsonify({
+        'timestamp': datetime.utcnow().isoformat(),
+        'queueVideo': json_queue
+    })
+
+@app.post("/api/v1/queue/<int:room_id>/")
+def post_queue(room_id):
+    queueVideo = Queue.from_json(request.get_json())
+    db.session.add(queueVideo)
+    db.session.commit()
+    return jsonify(queueVideo.to_json()), 201

@@ -329,28 +329,28 @@ def lobby():
 
 # ROOM ROUTE
 
-# @app.route('/room/',  methods=['GET','POST'])
+@app.route('/room/', methods=['GET','POST'])
 @app.route('/room/<string:roomCode>/',  methods=['GET','POST'])
-def room(roomCode):
+def room(roomCode=""):
     #User can be accessed by current_user in templates
 
     #Initialize the room???
     
-    curr_room = Room.query.filter_by(code=roomCode).first()
-
+    #curr_room = Room.query.filter_by(code=roomCode).first()
+    
     #Form to accept youtube link
     form = VideoForm()
 
-    if request.method == 'GET':  
-        if curr_room.url != "":
-            video = curr_room.url
+    if request.method == 'GET':
+        if session['video'] != "": # should be curr_room.url
+            video = "" # should be curr_room.url
             if 'youtube' in video:
                 video = video.replace("watch?v=", "embed/")
             elif 'vimeo' in video:
                 video = video.replace("vimeo.com","player.vimeo.com/video")
             else:
                 flash('Something went wrong.')
-                return redirect(url_for('room/{roomCode}'))
+                return redirect(url_for('room/'))
             return render_template('room.html', room=curr_room, video=video, form=form)
         else:
             return render_template('room.html', room=curr_room, video="", form=form)
@@ -358,8 +358,9 @@ def room(roomCode):
     if form.validate():
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
-            return redirect(url_for('room/{roomCode}'))
-        
+            return redirect(url_for('room/'))
+        session['video'] = form.video.data
+
         one_instance = Queue(url=form.video.data, room=roomCode)
         db.session.add(one_instance)
         db.session.commit()

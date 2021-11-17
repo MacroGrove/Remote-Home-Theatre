@@ -10,3 +10,10 @@ Group project for Web Development Class.
 - Guest access with room code
 
 ## Quick Setup
+imports:
+- yagmail
+- jwt
+- time
+- rstr
+- hasher
+- datetime

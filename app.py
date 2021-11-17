@@ -11,6 +11,7 @@ python -m pip install --upgrade flask-login
 import os
 from flask import Flask, render_template, url_for, redirect
 from flask import request, session, flash
+from flask import jsonify
 from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user

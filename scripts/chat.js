@@ -18,10 +18,6 @@ async function loadMessages() {
         });
 }
 
-async function getMessages() {
-    return 
-}
-
 /**
  * Asynchronously add a div with all messagse from db to the page.
  * 
@@ -35,7 +31,7 @@ async function insertMessage(message) {
 }
 
 // send message to database
-async function storeMessage() {
+async function postMessage() {
 
 }
 

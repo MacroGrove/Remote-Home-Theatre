@@ -469,7 +469,7 @@ def get_queue(room_id):
     json_queue = []
 
     for queueVideo in queue:
-        json_queue.append(message.to_json())
+        json_queue.append(queueVideo.to_json())
     
     return jsonify({
         'timestamp': datetime.utcnow().isoformat(),

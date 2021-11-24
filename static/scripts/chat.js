@@ -17,7 +17,7 @@ async function loadMessages() {
     */
     
     const roomID = document.getElementById("roomID").value;
-    return fetch(`/api/v1/messages/${roomID}`)
+    return fetch(`/api/v1/messages/${roomID}/`)
         .then(validateJSON)
         .then(messageData => {
             for (const message of messageData.messages) {
@@ -66,7 +66,7 @@ async function postMessage() {
         "message": messageText
     };
 
-    return fetch(`/api/v1/messages/${roomID}`, {
+    return fetch(`/api/v1/messages/${roomID}/`, {
         method: "POST",
         headers: {
             "content-Type": "application/json"

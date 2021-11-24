@@ -153,16 +153,16 @@ class Room(db.Model):
 # Create a database model for messages
 class Message(db.Model):
     __tablename__ = 'Messages'
-    user = db.Column(db.Unicode, db.ForeignKey('Users.id'))
-    room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
+    userID = db.Column(db.Unicode, db.ForeignKey('Users.id'))
+    roomID = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False)
     message = db.Column(db.Unicode, nullable=False)
 
     def to_json(self):
         return {
-            "user": self.user,
-            "room": self.room,
+            # "userID": self.userID,
+            "roomID": self.roomID,
             "id": self.id,
             "timestamp": self.timestamp.isoformat(),
             "message": self.message
@@ -171,8 +171,8 @@ class Message(db.Model):
     @classmethod
     def from_json(cls, data):
         return cls(
-            user=data['user'],
-            room=data['room'],
+            # userID=data['userID'],
+            roomID=data['roomID'],
             timestamp=datetime.utcnow(),
             message=data['message']
         )
@@ -454,9 +454,9 @@ def get_reset_password(token):
 # API
 ###############################################################################
 
-@app.get("/api/v1/messages/<int:room_id>/")
+@app.get("/api/v1/messages/<int:room_id>")
 def get_messages(room_id):
-    room = Message.query.get_or_404(room_id)
+    room = Message.query.filter_by(roomID=room_id).first()
 
     messages = sorted(room.messages, key=lambda message: message.timestamp)
     json_messages = []
@@ -470,8 +470,9 @@ def get_messages(room_id):
     })
 
 @app.post("/api/v1/messages/<int:room_id>/")
-def post_message(room_id):
+def post_message():
     message = Message.from_json(request.get_json())
+
     db.session.add(message)
     db.session.commit()
     return jsonify(message.to_json()), 201

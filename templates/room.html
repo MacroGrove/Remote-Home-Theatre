@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <title> RTH | {{ room.name }} </title>
@@ -78,8 +78,10 @@
 
                         <div class="tab-content" id="myTabContent">
                             
+                            <input id="userID" type="hidden" value={{current_user}}>
                             <input id="roomID" type="hidden" value={{room.id}}>
 
+                            <!-- QUEUE -->
                             <div class="tab-pane fade show active" id="queue" role="tabpanel" aria-labelledby="queue-tab">
                                 <div id="queue-list"></div>
                                 
@@ -88,6 +90,7 @@
                                 
                             </div>
 
+                            <!-- CHAT  -->
                             <div class="tab-pane fade" id="chat" role="tabpanel" aria-labelledby="chat-tab">
                                 <div id="message-list"></div>
                       

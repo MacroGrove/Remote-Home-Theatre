@@ -59,7 +59,7 @@ async function postMessage() {
         4. once POST is fulfilled, insert comment into the page
     */
 
-    const roomID = document.get("roomID").value;
+    const roomID = document.getElementById("roomID").value;
     const messageText = document.getElementById("message-field").value;
     const message = {
         "roomID": roomID,

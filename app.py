@@ -168,6 +168,15 @@ class Message(db.Model):
             "message": self.message
         }
 
+    @classmethod
+    def from_json(cls, data):
+        return cls(
+            user=data['user'],
+            room=data['room'],
+            timestamp=datetime.utcnow(),
+            message=data['message']
+        )
+
 # Create a database model for room video queues
 class Queue(db.Model):
     __tablename__ = 'Queues'
@@ -184,8 +193,8 @@ class Queue(db.Model):
 
 
 # Refresh the database to reflect these models
-db.drop_all()
-db.create_all()
+# db.drop_all()
+# db.create_all()
 
 ###############################################################################
 # Route Handlers
@@ -208,6 +217,7 @@ def index():
         return render_template('home.html', form=form)
 
 # ACCOUNT ACCESS ROUTES
+
 @app.route('/login/<token>', methods=['GET','POST'])
 @app.route('/login/', methods=['GET','POST'])
 def login(token=None):
@@ -338,7 +348,8 @@ def room(roomCode=""):
     
     #curr_room = Room.query.filter_by(code=roomCode).first()
     room_id = request.args.get('roomid')    #Form to accept youtube link
-    room = Room.query.get(room_id)
+    # room = Room.query.get(room_id)
+    room = Room.query.filter_by(id='roomid')
     form = VideoForm()
 
     if request.method == 'GET':
@@ -438,6 +449,10 @@ def get_reset_password(token):
         return render_template('reset_password.html', form=form)
 
     return render_template('reset_password.html', form=form)
+
+###############################################################################
+# API
+###############################################################################
 
 @app.get("/api/v1/messages/<int:room_id>/")
 def get_messages(room_id):

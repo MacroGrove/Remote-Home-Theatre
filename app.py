@@ -75,8 +75,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.Unicode, nullable=False)
     password_hash = db.Column(db.LargeBinary)
     is_verified = db.Column(db.Boolean, nullable=False)
-    rooms = db.relationship('Room', backref='owner')
-    messages = db.relationship('Message', backref='owner')
+    rooms = db.relationship('Room', backref='user')
+    messages = db.relationship('Message', backref='user')
 
     def __str__(self):
         return f"{self.username}"
@@ -139,6 +139,7 @@ class Room(db.Model):
     title = db.Column(db.Unicode, nullable=False)
     description = db.Column(db.Unicode)
     url = db.Column(db.Unicode, default="", nullable=True)
+    messages = db.relationship('Message', backref='room')
 
     def to_json(self):
         return {
@@ -193,8 +194,20 @@ class Queue(db.Model):
 
 
 # Refresh the database to reflect these models
-# db.drop_all()
-# db.create_all()
+db.drop_all()
+db.create_all()
+
+# Setup User - email, username, password, is_verified
+user = User(id=0, email="moodyms18@gcc.edu", username="blah", password="moodyms18@gcc.edu", is_verified=True)
+
+# user, id, title, url
+room = Room(user=user, id=0, code="abcdfghjkl", title="Test Room", description="", url="")
+
+# userID, roomID, id, timestamp, message
+message = Message(user=user, room=room, id=0, timestamp=datetime.utcnow(), message="Test message! I hope it works.")
+
+db.session.add_all((user, room, message))
+db.session.commit()
 
 ###############################################################################
 # Route Handlers
@@ -339,17 +352,13 @@ def lobby():
 
 # ROOM ROUTE
 
-@app.route('/room/', methods=['GET','POST'])
-@app.route('/room/<string:roomCode>/',  methods=['GET','POST'])
-def room(roomCode=""):
+@app.route('/room/', methods=['GET','POST']) # for testing
+@app.route('/room/<int:roomCode>/',  methods=['GET','POST'])
+def room(roomCode=0): # remove 0 after testing!
+
     #User can be accessed by current_user in templates
 
-    #Initialize the room???
-    
-    #curr_room = Room.query.filter_by(code=roomCode).first()
-    room_id = request.args.get('roomid')    #Form to accept youtube link
-    # room = Room.query.get(room_id)
-    room = Room.query.filter_by(id='roomid')
+    room = Room.query.get_or_404(roomCode)
     form = VideoForm()
 
     if request.method == 'GET':
@@ -362,7 +371,7 @@ def room(roomCode=""):
                 video = video.replace("vimeo.com","player.vimeo.com/video")
             else:
                 flash('Something went wrong.')
-                return redirect(url_for('room/'))
+                return redirect(url_for('room'))
             return render_template('room.html', room=room, video=video, form=form)
         else:
             return render_template('room.html', room=room, video="", form=form)
@@ -370,10 +379,10 @@ def room(roomCode=""):
     if form.validate():
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
-            return redirect(url_for('room/'))
+            return redirect(url_for('room'))
         session['video'] = form.video.data
 
-        one_instance = Queue(url=form.video.data, room=room_id)
+        one_instance = Queue(url=form.video.data, room=room)
         db.session.add(one_instance)
         db.session.commit()
 
@@ -454,9 +463,10 @@ def get_reset_password(token):
 # API
 ###############################################################################
 
-@app.get("/api/v1/messages/<int:room_id>")
+@app.get("/api/v1/messages/<int:room_id>/")
 def get_messages(room_id):
-    room = Message.query.filter_by(roomID=room_id).first()
+    # room = Message.query.filter_by(roomID=room_id).first()
+    room = Room.query.get_or_404(room_id)
 
     messages = sorted(room.messages, key=lambda message: message.timestamp)
     json_messages = []
@@ -466,11 +476,11 @@ def get_messages(room_id):
     
     return jsonify({
         'timestamp': datetime.utcnow().isoformat(),
-        'message': json_messages
+        'messages': json_messages
     })
 
 @app.post("/api/v1/messages/<int:room_id>/")
-def post_message():
+def post_message(room_id):
     message = Message.from_json(request.get_json())
 
     db.session.add(message)

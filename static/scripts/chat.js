@@ -45,7 +45,7 @@ async function insertMessage(message) {
 
     const chat = document.getElementById("message-list");
     const item = document.createElement("p");
-    item.innerText = message.text;
+    item.innerText = message.message;
     chat.appendChild(item);
 }
 

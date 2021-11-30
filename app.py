@@ -356,19 +356,34 @@ def lobby():
 
 # ROOM ROUTE
 
-@app.route('/room/', methods=['GET','POST']) # for testing
-@app.route('/room/<int:roomCode>/',  methods=['GET','POST'])
-def room(roomCode=0): # remove 0 after testing!
+# @app.route('/room/', methods=['GET','POST']) # for testing
+@app.route('/room/<roomCode>/',  methods=['GET','POST'])
+def room(roomCode): # remove 0 after testing!
 
     #User can be accessed by current_user in templates
 
-    room = Room.query.get_or_404(roomCode)
+    room = Room.query.filter_by(code=roomCode).first()
     form = VideoForm()
 
-    if request.method == 'GET':
-        if "video" in session:     # should be curr_room.url
-            video = session['video'] # should be curr_room.url
+    # if request.method == 'GET':
+    #     if "video" in session:     # should be curr_room.url
+    #         video = session['video'] # should be curr_room.url
 
+    #         if 'youtube' in video:
+    #             video = video.replace("watch?v=", "embed/")
+    #         elif 'vimeo' in video:
+    #             video = video.replace("vimeo.com","player.vimeo.com/video")
+    #         else:
+    #             flash('Something went wrong.')
+    #             return redirect(url_for('room'))
+    #         return render_template('room.html', room=room, video=video, form=form)
+    #     else:
+    #         return render_template('room.html', room=room, video="", form=form)
+
+    if request.method == 'GET':
+        video = room.url
+        print(video)
+        if video != "":
             if 'youtube' in video:
                 video = video.replace("watch?v=", "embed/")
             elif 'vimeo' in video:
@@ -384,13 +399,12 @@ def room(roomCode=0): # remove 0 after testing!
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
             return redirect(url_for('room'))
-        session['video'] = form.video.data
-
-        one_instance = Queue(url=form.video.data, room=room)
+        # session['video'] = form.video.data
+        room.url = form.video.data
+        one_instance = Queue(url=form.video.data, room=room.id)
         db.session.add(one_instance)
         db.session.commit()
-
-        return redirect(url_for("room"))
+        return redirect(f"/room/{roomCode}/")
     else:
         for field, error in form.errors.items():
             flash(f"{field}: {error}")

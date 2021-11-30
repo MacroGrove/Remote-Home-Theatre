@@ -140,6 +140,7 @@ class Room(db.Model):
     description = db.Column(db.Unicode)
     url = db.Column(db.Unicode, default="", nullable=True)
     messages = db.relationship('Message', backref='room')
+    queue = db.relationship('Queue', backref='queue')
 
     def to_json(self):
         return {
@@ -206,7 +207,10 @@ room = Room(user=user, id=0, code="abcdfghjkl", title="Test Room", description="
 # userID, roomID, id, timestamp, message
 message = Message(user=user, room=room, id=0, timestamp=datetime.utcnow(), message="Test message! I hope it works.")
 
-db.session.add_all((user, room, message))
+# room, id, url
+queue = Queue(queue=room, id=0, url="https://www.youtube.com/watch?v=ekgUjyWe1Yc")
+
+db.session.add_all((user, room, message, queue))
 db.session.commit()
 
 ###############################################################################

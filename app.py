@@ -372,7 +372,8 @@ def room(roomCode): # remove 0 after testing!
 
     #User can be accessed by current_user in templates
 
-    room = Room.query.get_or_404(roomCode)
+    room = Room.query.filter_by(code=roomCode).first()
+    # room = Room.query.get_or_404(roomCode)
     form = VideoForm()
 
     # if request.method == 'GET':

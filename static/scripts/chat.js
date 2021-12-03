@@ -49,7 +49,6 @@ async function insertMessage(message) {
     const item = document.createElement("p");
 
     item.innerText = message.user.username + " " + message.timestamp + "\n" + message.message;
-    // item.innerText = message.message;
     chat.appendChild(item);
 }
 

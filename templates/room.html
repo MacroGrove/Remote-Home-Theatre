@@ -86,11 +86,12 @@
                             <!-- QUEUE -->
                             <div class="tab-pane fade show active" id="queue" role="tabpanel" aria-labelledby="queue-tab">
                                 <div id="queue-list"></div>
-                                
+                                {% if not current_user.is_anonymous %}   
                                 <form>
-                                    <input id="queue-field" class="col" placeholder="URL">
-                                <button id="queue-button" type="button" class="btn btn-primary">Submit</button>
-                                </form>                                
+                                    <input id="queue-field" class="col my-1" placeholder="URL">
+                                <button id="queue-button" type="button" class="btn btn-primary my-1">Submit</button>
+                                </form>
+                                {% endif %}                                
                             </div>
 
                             <!-- CHAT  -->
@@ -99,11 +100,12 @@
                                     <div id="message-list">
                                         <!-- add scrollable area -->
                                     </div>
-
+                                    {% if not current_user.is_anonymous %}
                                     <form>
-                                        <input id="message-field" class="col" placeholder="Message">
-                                        <button id="message-button" type="button" class="btn btn-primary">Send</button>
+                                        <input id="message-field" class="col my-1" placeholder="Message">
+                                        <button id="message-button" type="button" class="btn btn-primary my-1">Send</button>
                                     </form>
+                                    {% endif %}
                                 </div>                              
                             </div>
                         </div>

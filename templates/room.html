@@ -89,10 +89,12 @@
                                         
                                     </div>
                                     
+                                    {% if not current_user.is_anonymous %} 
                                     <form>
                                         <input id="queue-field" class="col" placeholder="video link">
                                         <button id="queue-button" type="button" class="btn btn-primary">Submit</button>
-                                    </form>                                
+                                    </form>    
+                                    {% endif %}                            
                                 </div>
                             </div>
 
@@ -102,11 +104,13 @@
                                     <div id="message-list">
                                         <!-- add scrollable area -->
                                     </div>
-
+                                    
+                                    {% if not current_user.is_anonymous %} 
                                     <form>
                                         <input id="message-field" class="col" placeholder="Message">
                                         <button id="message-button" type="button" class="btn btn-primary">Send</button>
                                     </form>
+                                    {% endif%}
                                 </div>                              
                             </div>
                         </div>

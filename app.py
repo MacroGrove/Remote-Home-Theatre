@@ -163,17 +163,17 @@ class Message(db.Model):
 
     def to_json(self):
         return {
-            # "userID": self.userID,
+            "user": {"userID": self.userID, "username": self.user.username},
             "roomID": self.roomID,
             "id": self.id,
-            "timestamp": self.timestamp.isoformat(),
+            # "timestamp": self.timestamp.isoformat(),
+            "timestamp": self.timestamp.strftime("%m/%d/%Y, %H:%M:%S"),
             "message": self.message
         }
 
     @classmethod
     def from_json(cls, data):
         return cls(
-            # userID=data['userID'],
             roomID=data['roomID'],
             timestamp=datetime.utcnow(),
             message=data['message']
@@ -375,7 +375,7 @@ def room(roomCode): # remove 0 after testing!
     room = Room.query.filter_by(code=roomCode).first()
     # room = Room.query.get_or_404(roomCode)
     form = VideoForm()
-    
+
     if request.method == 'GET':
         video = room.url
         print(video)

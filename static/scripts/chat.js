@@ -43,9 +43,12 @@ async function insertMessage(message) {
         4. add this message div to the messages container
     */
 
+    const date = new Date();
+    const user = document.getElementById("userID");
     const chat = document.getElementById("message-list");
     const item = document.createElement("p");
-    item.innerText = message.message;
+
+    item.innerText = message.user.username + " " + message.timestamp + "\n" + message.message;
     chat.appendChild(item);
 }
 

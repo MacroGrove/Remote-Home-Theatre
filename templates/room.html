@@ -29,17 +29,17 @@
                 <div class="d-flex justify-content-end"></div>
                     {% if current_user.is_authenticated %}
                     <div class="nav-link">
-                        <a class="btn btn-light" href="/lobby/" role="button">Lobby</a>
+                        <a class="btn btn-light glow-button" href="/lobby/" role="button">Lobby</a>
                     </div>
                     <div class="nav-link">
-                        <a class="btn btn-light" href="/logout/" role="button">Logout</a>
+                        <a class="btn btn-light glow-button" href="/logout/" role="button">Logout</a>
                     </div>
                     {% else %}
                     <div class="nav-link">
-                        <a class="btn btn-light" href="/login/" role="button">Login</a>
+                        <a class="btn btn-light glow-button" href="/login/" role="button">Login</a>
                     </div>
                     <div class="nav-link">
-                        <a class="btn btn-light" href="/register/" role="button">Join</a>
+                        <a class="btn btn-light glow-button" href="/register/" role="button">Join</a>
                     </div>
                     {% endif %}
                 </div>
@@ -111,8 +111,8 @@
                 </div>
             </div>
         </main>
-        <footer class="bg-primary mt-auto">
-            Created by Dumbledorf Stonks ©
+        <footer class="container-fluid p-2 m-1 border-top box-shadow">
+            <h6>Created by Dumbledorf Stonks © 2021</h6>
         </footer>
     </body>
 </html>

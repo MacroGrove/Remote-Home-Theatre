@@ -15,3 +15,10 @@ form{
 }
 
 .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+.glow-button:hover {
+  box-shadow: 0 2px 6px rgba(145, 92, 182, .4);
+}
+.glow-button {
+  box-shadow: 0 1px 3px rgba(145, 92, 182, .4);
+}

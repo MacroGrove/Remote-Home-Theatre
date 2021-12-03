@@ -373,6 +373,9 @@ def room(roomCode): # remove 0 after testing!
     #User can be accessed by current_user in templates
 
     room = Room.query.filter_by(code=roomCode).first()
+    if room is None:
+        flash('This room does not exist.')
+        return redirect(url_for('lobby'))
     # room = Room.query.get_or_404(roomCode)
     form = VideoForm()
 
@@ -412,7 +415,7 @@ def room(roomCode): # remove 0 after testing!
             return redirect(url_for('room'))
         # session['video'] = form.video.data
         room.url = form.video.data
-        one_instance = Queue(url=form.video.data, room=room.id)
+        one_instance = Queue(url=form.video.data, timestamp=datetime.utcnow(), room=room.id)
         db.session.add(one_instance)
         db.session.commit()
         return redirect(f"/room/{roomCode}/")

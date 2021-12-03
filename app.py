@@ -347,7 +347,7 @@ def lobby():
 
             if len(userRooms) < 6:
                 # generate access code
-                code = rstr.xeger(r'^[a-zA-Z0-9]{12,}$')
+                code = rstr.xeger(r'^[a-zA-Z0-9]{8}$')
                 one_instance = Room(user_id=current_user.id,  
                     code=code, title=form.name.data, description=form.description.data)
                 

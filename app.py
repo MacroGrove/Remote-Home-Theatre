@@ -375,22 +375,7 @@ def room(roomCode): # remove 0 after testing!
     room = Room.query.filter_by(code=roomCode).first()
     # room = Room.query.get_or_404(roomCode)
     form = VideoForm()
-
-    # if request.method == 'GET':
-    #     if "video" in session:     # should be curr_room.url
-    #         video = session['video'] # should be curr_room.url
-
-    #         if 'youtube' in video:
-    #             video = video.replace("watch?v=", "embed/")
-    #         elif 'vimeo' in video:
-    #             video = video.replace("vimeo.com","player.vimeo.com/video")
-    #         else:
-    #             flash('Something went wrong.')
-    #             return redirect(url_for('room'))
-    #         return render_template('room.html', room=room, video=video, form=form)
-    #     else:
-    #         return render_template('room.html', room=room, video="", form=form)
-
+    
     if request.method == 'GET':
         video = room.url
         print(video)

@@ -142,6 +142,12 @@ class Room(db.Model):
     messages = db.relationship('Message', backref='room')
     videos = db.relationship('Queue', backref='blah')
 
+    def __str__(self):
+        return f"Room(code={self.code})"
+    
+    def __repr__(self):
+        return str(self)
+
     def to_json(self):
         return {
             "user_id": self.user_id,
@@ -337,7 +343,14 @@ def lobby():
     form = NewRoomForm()
 
     if request.method == 'GET':  
-        return render_template('lobby.html', form=form) #You can access current_user here
+         # Convert user's room history into a list of rooms
+        room_history = []
+        for r in session.get('room_history', []):
+            room_history.append(Room.query.filter_by(code=r).first())
+        
+        print(room_history)
+
+        return render_template('lobby.html', form=form, room_history=room_history) #You can access current_user here
     
     if request.method == 'POST':
         if form.validate():
@@ -392,13 +405,13 @@ def room(roomCode): # remove 0 after testing!
         if "room_history" in session:
             if room.code not in session['room_history']:
                 session['room_history'].append(room.code)
-                print(room.code)
+                # print(room.code)
         else:
-            session['room_history'] = [room.code]
-        print(session['room_history'])
-        # convert session history into a list of rooms
+            session['room_history'] = []
+            session['room_history'].append(room.code)
+        # print(session['room_history'])
 
-        return render_template('room.html', room=room, history=session.get('room_history', []), video=video, form=form)
+        return render_template('room.html', room=room, video=video, form=form)
         
     # Change room video
     if form.validate():

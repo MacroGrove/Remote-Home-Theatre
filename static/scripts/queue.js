@@ -29,7 +29,8 @@ async function loadQueue() {
  * @param {Array.<queueVideo>} queue an array of Message objects from db
  */
 async function insertVideo(video) {
-    const chat = document.getElementById("queue-list");
+    
+    const queue = document.getElementById("queue-list");
     const item = document.createElement("p");
     item.innerText = video.url;
     queue.appendChild(item);

@@ -204,6 +204,7 @@ class Queue(db.Model):
             url=data['url']
         )
 
+
 # Refresh the database to reflect these models
 db.drop_all()
 db.create_all()
@@ -523,3 +524,14 @@ def post_queue(room_id):
     db.session.add(queueVideo)
     db.session.commit()
     return jsonify(queueVideo.to_json()), 201
+
+@app.get("/api/v1/video/<int:room_id>/")
+def get_video(room_id):
+    room = Room.query.get_or_404(room_id)
+
+    video = room.url
+
+    return jsonify({
+        'timestamp': datetime.utcnow().isoformat(),
+        'url': video
+    })

@@ -140,7 +140,7 @@ class Room(db.Model):
     description = db.Column(db.Unicode)
     url = db.Column(db.Unicode, default="", nullable=True)
     messages = db.relationship('Message', backref='room')
-    queue = db.relationship('Queue', backref='queue')
+    videos = db.relationship('Queue', backref='blah')
 
     def to_json(self):
         return {
@@ -184,15 +184,25 @@ class Queue(db.Model):
     __tablename__ = 'Queues'
     room = db.Column(db.Integer, db.ForeignKey('Rooms.id'))
     id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, nullable=False)
     url = db.Column(db.Unicode, nullable=False)
 
     def to_json(self):
         return {
             "room": self.room,
             "id": self.id,
+            "timestamp": self.timestamp.isoformat(),
             "url": self.url
         }
 
+    @classmethod
+    def from_json(cls, data):
+        return cls(
+            # userID=data['userID'],
+            room=data['roomID'],
+            timestamp=datetime.utcnow(),
+            url=data['url']
+        )
 
 # Refresh the database to reflect these models
 db.drop_all()
@@ -208,7 +218,7 @@ room = Room(user=user, id=0, code="abcdfghjkl", title="Test Room", description="
 message = Message(user=user, room=room, id=0, timestamp=datetime.utcnow(), message="Test message! I hope it works.")
 
 # room, id, url
-queue = Queue(queue=room, id=0, url="https://www.youtube.com/watch?v=ekgUjyWe1Yc")
+queue = Queue(room=room.id, id=0, timestamp=datetime.utcnow(), url="https://www.youtube.com/watch?v=ekgUjyWe1Yc")
 
 db.session.add_all((user, room, message, queue))
 db.session.commit()
@@ -356,19 +366,20 @@ def lobby():
 
 # ROOM ROUTE
 
-@app.route('/room/', methods=['GET','POST']) # for testing
-@app.route('/room/<int:roomCode>/',  methods=['GET','POST'])
-def room(roomCode=0): # remove 0 after testing!
+# @app.route('/room/', methods=['GET','POST']) # for testing
+@app.route('/room/<roomCode>/',  methods=['GET','POST'])
+def room(roomCode): # remove 0 after testing!
 
     #User can be accessed by current_user in templates
 
-    room = Room.query.get_or_404(roomCode)
+    room = Room.query.filter_by(code=roomCode).first()
+    # room = Room.query.get_or_404(roomCode)
     form = VideoForm()
 
     if request.method == 'GET':
-        if "video" in session:     # should be curr_room.url
-            video = session['video'] # should be curr_room.url
-
+        video = room.url
+        print(video)
+        if video != "":
             if 'youtube' in video:
                 video = video.replace("watch?v=", "embed/")
             elif 'vimeo' in video:
@@ -384,13 +395,12 @@ def room(roomCode=0): # remove 0 after testing!
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
             return redirect(url_for('room'))
-        session['video'] = form.video.data
-
-        one_instance = Queue(url=form.video.data, room=room)
+        # session['video'] = form.video.data
+        room.url = form.video.data
+        one_instance = Queue(url=form.video.data, room=room.id)
         db.session.add(one_instance)
         db.session.commit()
-
-        return redirect(url_for("room"))
+        return redirect(f"/room/{roomCode}/")
     else:
         for field, error in form.errors.items():
             flash(f"{field}: {error}")
@@ -493,22 +503,23 @@ def post_message(room_id):
 
 @app.get("/api/v1/queue/<int:room_id>/")
 def get_queue(room_id):
-    room = Queue.query.get_or_404(room_id)
+    room = Room.query.get_or_404(room_id)
 
-    queue = sorted(room.queue, key=lambda queueVideo: queueVideo.timestamp)
-    json_queue = []
+    queue = sorted(room.videos, key=lambda video: video.timestamp)
+    json_videos = []
 
-    for queueVideo in queue:
-        json_queue.append(queueVideo.to_json())
+    for video in queue:
+        json_videos.append(video.to_json())
     
     return jsonify({
         'timestamp': datetime.utcnow().isoformat(),
-        'queueVideo': json_queue
+        'videos': json_videos
     })
 
 @app.post("/api/v1/queue/<int:room_id>/")
 def post_queue(room_id):
     queueVideo = Queue.from_json(request.get_json())
+    
     db.session.add(queueVideo)
     db.session.commit()
     return jsonify(queueVideo.to_json()), 201

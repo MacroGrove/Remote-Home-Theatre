@@ -7,8 +7,16 @@ window.addEventListener("DOMContentLoaded", function() {
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+  //onYouTubeIframeAPIReady()
+
 
 });
+
+setInterval(function() {
+  onYouTubeIframeAPIReady()
+}, 3000);
+
+
 var player;
 function onYouTubeIframeAPIReady()  {
 
@@ -17,20 +25,24 @@ function onYouTubeIframeAPIReady()  {
   fetch(`/api/v1/video/${roomID}/`)
         .then(validateJSON)
         .then(videoData => {
-            url = videoData.url 
+            url = videoData.url
         })
         .catch(error => {
             console.log("Message Fetch Failed: ", error);
         });
 
-  url = url.substring(33, 44);
-  //Create an <iframe> (and YouTube player) after the API code downloads.
 
   
+  if (typeof url === 'undefined') {
+    
+    //window.alert('URL not found')
+  }
+  else {
+    const id = url.substring(32, 43);
     player = new YT.Player('player', {
       height: '390',
       width: '640',
-      videoId: url,
+      videoId: id,
       playerVars: {
         'playsinline': 1
       },
@@ -39,6 +51,12 @@ function onYouTubeIframeAPIReady()  {
       //  'onStateChange': onPlayerStateChange
       }
     });
+  }
+  
+  //Create an <iframe> (and YouTube player) after the API code downloads.
+
+  
+    
 }
 
 

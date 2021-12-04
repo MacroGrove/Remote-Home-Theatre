@@ -18,43 +18,42 @@ setInterval(function() {
 }, 3000);
 
 
-var player;
-function onYouTubeIframeAPIReady()  {
+
+async function onYouTubeIframeAPIReady()  {
 
   let url
 
   const roomID = document.getElementById("roomID").value;
+  var player = document.getElementById('player');
+  console.log('cycle');
   fetch(`/api/v1/video/${roomID}/`)
         .then(validateJSON)
         .then(videoData => {
             url = videoData.url
         })
+        .then(function () {
+          const id = url.substring(32, 43);
+          player = new YT.Player('player', {
+            height: '480',
+            width: '854',
+            videoId: id,
+            playerVars: {
+              'playsinline': 1
+            },
+            events: {
+              'onReady': onPlayerReady,
+            //  'onStateChange': onPlayerStateChange
+            }
+           });
+        })
+        .then(function (){
+        })
         .catch(error => {
             console.log("Message Fetch Failed: ", error);
         });
+      
 
 
-  
-  if (typeof url === 'undefined') {
-    console.log("URL not found")
-    //window.alert('URL not found')
-  }
-  else {
-    const id = url.substring(32, 43);
-    player = new YT.Player('player', {
-      height: '480',
-      width: '854',
-      videoId: id,
-      playerVars: {
-        'playsinline': 1
-      },
-      events: {
-        'onReady': onPlayerReady,
-      //  'onStateChange': onPlayerStateChange
-      }
-    });
-  }
-  
   //Create an <iframe> (and YouTube player) after the API code downloads.
 
   
@@ -77,14 +76,13 @@ function onPlayerReady(event) {
 //    done = true;
 //  }
 //}
-function stopVideo() {
+async function stopVideo() {
   player.stopVideo();
 }
 
 
 
-
-function validateJSON(response) {
+async function validateJSON(response) {
     if (response.ok) {
         return response.json();
     } else {

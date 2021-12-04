@@ -40,8 +40,8 @@ function onYouTubeIframeAPIReady()  {
   else {
     const id = url.substring(32, 43);
     player = new YT.Player('player', {
-      height: '390',
-      width: '640',
+      height: '480',
+      width: '854',
       videoId: id,
       playerVars: {
         'playsinline': 1

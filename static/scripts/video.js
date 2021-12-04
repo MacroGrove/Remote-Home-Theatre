@@ -6,6 +6,7 @@ window.addEventListener("DOMContentLoaded", function() {
   tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  
 
   //onYouTubeIframeAPIReady()
 
@@ -22,6 +23,7 @@ function onYouTubeIframeAPIReady()  {
 
   let url
 
+  const roomID = document.getElementById("roomID").value;
   fetch(`/api/v1/video/${roomID}/`)
         .then(validateJSON)
         .then(videoData => {
@@ -34,7 +36,7 @@ function onYouTubeIframeAPIReady()  {
 
   
   if (typeof url === 'undefined') {
-    
+    console.log("URL not found")
     //window.alert('URL not found')
   }
   else {

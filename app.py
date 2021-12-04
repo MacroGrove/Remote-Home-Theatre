@@ -554,6 +554,8 @@ def get_video(room_id):
 
     video = room.url
 
+    print(video)
+
     return jsonify({
         'timestamp': datetime.utcnow().isoformat(),
         'url': video

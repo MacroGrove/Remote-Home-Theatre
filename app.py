@@ -142,6 +142,12 @@ class Room(db.Model):
     messages = db.relationship('Message', backref='room')
     videos = db.relationship('Queue', backref='blah')
 
+    def __str__(self):
+        return f"Room(code={self.code})"
+    
+    def __repr__(self):
+        return str(self)
+
     def to_json(self):
         return {
             "user_id": self.user_id,
@@ -163,17 +169,16 @@ class Message(db.Model):
 
     def to_json(self):
         return {
-            # "userID": self.userID,
+            "user": {"userID": self.userID, "username": self.user.username},
             "roomID": self.roomID,
             "id": self.id,
-            "timestamp": self.timestamp.isoformat(),
+            "timestamp": self.timestamp.strftime("%m/%d/%Y, %H:%M:%S"),
             "message": self.message
         }
 
     @classmethod
     def from_json(cls, data):
         return cls(
-            # userID=data['userID'],
             roomID=data['roomID'],
             timestamp=datetime.utcnow(),
             message=data['message']
@@ -303,7 +308,7 @@ def register():
     user = User.query.filter_by(email=form.email.data).first()
     
     if form.validate() and user is None:
-        #...
+        
         user = User(password=form.password.data, email=form.email.data, username=form.username.data, is_verified=False)
         db.session.add(user)
         db.session.commit()
@@ -339,7 +344,14 @@ def lobby():
     form = NewRoomForm()
 
     if request.method == 'GET':  
-        return render_template('lobby.html', form=form) #You can access current_user here
+         # Convert user's room history into a list of rooms
+        room_history = []
+        for r in session.get('room_history', []):
+            room_history.append(Room.query.filter_by(code=r).first())
+        
+        print(room_history)
+
+        return render_template('lobby.html', form=form, room_history=room_history) #You can access current_user here
     
     if request.method == 'POST':
         if form.validate():
@@ -348,7 +360,7 @@ def lobby():
 
             if len(userRooms) < 6:
                 # generate access code
-                code = rstr.xeger(r'^[a-zA-Z0-9]{12,}$')
+                code = rstr.xeger(r'^[a-zA-Z0-9]{8}$')
                 one_instance = Room(user_id=current_user.id,  
                     code=code, title=form.name.data, description=form.description.data)
                 
@@ -380,6 +392,7 @@ def room(roomCode): # remove 0 after testing!
     if request.method == 'GET':
         video = room.url
         print(video)
+        
         if video != "":
             if 'youtube' in video:
                 video = video.replace("watch?v=", "embed/")
@@ -388,17 +401,27 @@ def room(roomCode): # remove 0 after testing!
             else:
                 flash('Something went wrong.')
                 return redirect(url_for('room'))
-            return render_template('room.html', room=room, video=video, form=form)
+        
+        # Save user's room history
+        if "room_history" in session:
+            if room.code not in session['room_history']:
+                session['room_history'].append(room.code)
+                # print(room.code)
         else:
-            return render_template('room.html', room=room, video="", form=form)
+            session['room_history'] = []
+            session['room_history'].append(room.code)
+        # print(session['room_history'])
 
+        return render_template('room.html', room=room, video=video, form=form)
+        
+    # Change room video
     if form.validate():
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
             return redirect(url_for('room'))
         # session['video'] = form.video.data
         room.url = form.video.data
-        one_instance = Queue(url=form.video.data, room=room.id)
+        one_instance = Queue(url=form.video.data, timestamp=datetime.utcnow(), room=room.id)
         db.session.add(one_instance)
         db.session.commit()
         return redirect(f"/room/{roomCode}/")
@@ -497,7 +520,7 @@ def get_messages(room_id):
 @app.post("/api/v1/messages/<int:room_id>/")
 def post_message(room_id):
     message = Message.from_json(request.get_json())
-
+    message.user = current_user
     db.session.add(message)
     db.session.commit()
     return jsonify(message.to_json()), 201

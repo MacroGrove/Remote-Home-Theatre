@@ -42,11 +42,15 @@ async function insertMessage(message) {
         3. add the 'message' class to the div for CSS
         4. add this message div to the messages container
     */
-
-    const chat = document.getElementById("message-list");
-    const item = document.createElement("p");
-    item.innerText = message.message;
-    chat.appendChild(item);
+    if (message.message !="") {
+        const chat = document.getElementById("message-list");
+        const head = document.createElement("b");
+        head.innerText = message.user.username + " " + message.timestamp;
+        const body = document.createElement("p");
+        body.innerText = message.message;
+        chat.appendChild(head);
+        chat.appendChild(body);
+    }
 }
 
 // send message to database

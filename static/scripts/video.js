@@ -26,17 +26,16 @@ async function getYouTubeVideo()  {
         .then(validateJSON)
         .then(videoData => {
             url = videoData.url
-            console.log(url)
         })
         .then(function () {
-          insertYouTubeIframe(url)
+          insertYouTubeVideo(url)
         })
         .catch(error => {
             console.log("Message Fetch Failed: ", error);
         });  //Create an <iframe> (and YouTube player) after the API code downloads.
 }
 
-async function insertYouTubeIframe(url) {
+async function insertYouTubeVideo(url) {
   let player = document.getElementById('player');
   const id = url.substring(32, 43);
   player = new YT.Player('player', {
@@ -69,7 +68,9 @@ async function patchYouTubeVideo() {
     body: JSON(stringify(video))
   })
   .then(validateJSON)
-  .then(insertYouTubeIframe(url))
+  .then(function () {
+    insertYouTubeVideo(url)
+  })
   .catch(error => {
     console.log("Video Patch Failed: ", error)
   });

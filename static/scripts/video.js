@@ -7,17 +7,17 @@ window.addEventListener("DOMContentLoaded", function() {
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   
-  // onYouTubeIframeAPIReady()
+  // getYouTubeVideo()
   const videoButton = document.getElementById("video-button");
-  videoButton.addEventListener("click", patchYouTubeUrl)
+  videoButton.addEventListener("click", patchYouTubeVideo)
 });
 
 setInterval(function() {
-  onYouTubeIframeAPIReady()
+  getYouTubeVideo()
   updateMessages()
 }, 3000);
 
-async function onYouTubeIframeAPIReady()  {
+async function getYouTubeVideo()  {
   let url
   const roomID = document.getElementById("roomID").value;
 
@@ -26,11 +26,10 @@ async function onYouTubeIframeAPIReady()  {
         .then(validateJSON)
         .then(videoData => {
             url = videoData.url
+            console.log(url)
         })
         .then(function () {
           insertYouTubeIframe(url)
-        })
-        .then(function (){
         })
         .catch(error => {
             console.log("Message Fetch Failed: ", error);
@@ -54,7 +53,7 @@ async function insertYouTubeIframe(url) {
   });
 }
 
-async function patchYouTubeUrl() {
+async function patchYouTubeVideo() {
   const roomID = document.getElementById("roomID").value;
   const url = document.getElementById("video-field").value;
   const video = {
@@ -70,6 +69,7 @@ async function patchYouTubeUrl() {
     body: JSON(stringify(video))
   })
   .then(validateJSON)
+  .then(insertYouTubeIframe(url))
   .catch(error => {
     console.log("Video Patch Failed: ", error)
   });

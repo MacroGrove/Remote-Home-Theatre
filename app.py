@@ -158,6 +158,12 @@ class Room(db.Model):
             "url": self.url
         }
 
+    def from_json(cls, data):
+        return cls(
+            roomID=data['roomID'],
+            url=data['url']
+        )
+
 # Create a database model for messages
 class Message(db.Model):
     __tablename__ = 'Messages'
@@ -400,7 +406,7 @@ def room(roomCode): # remove 0 after testing!
                 video = video.replace("vimeo.com","player.vimeo.com/video")
             else:
                 flash('Something went wrong.')
-                return redirect(url_for('room'))
+                # return redirect(url_for('room'))
         
         # Save user's room history
         if "room_history" in session:
@@ -418,7 +424,7 @@ def room(roomCode): # remove 0 after testing!
     if form.validate():
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
-            return redirect(url_for('room'))
+            # return redirect(url_for('.room'))
         # session['video'] = form.video.data
         room.url = form.video.data
         one_instance = Queue(url=form.video.data, timestamp=datetime.utcnow(), room=room.id)
@@ -554,5 +560,14 @@ def get_video(room_id):
 
     video = room.url
 
-
     return jsonify(room.to_json()), 201
+
+@app.patch("/api/v1/video/<int:room_id>/")
+def patch_video(room_id):
+    # room = Room.query.get_or_404(room_id)
+    room = Room.from_json(request.get_json())
+    return jsonify(room.to_json(), 201)
+
+
+
+

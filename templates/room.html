@@ -50,15 +50,15 @@
 
             <div class="container">
                 <div class="row align-items-start">
-                    <div class="col">  
+                    <div id="theatre" class="col">  
                         {% if not current_user.is_anonymous %}                     
                         <!-- Link Input -->
                         <form method="POST">
                             {{ form.hidden_tag() }}
 
-                            {{ form.video() }}
+                            {{ form.video(class="form-control") }}
 
-                            {{ form.submit() }}
+                            {{ form.submit(class="btn btn-primary") }}
                         </form>
                         {% endif %}
                         
@@ -96,7 +96,7 @@
                                     
                                     {% if not current_user.is_anonymous %} 
                                     <form>
-                                        <input id="queue-field" class="col" placeholder="video link">
+                                        <input id="queue-field" class="col form-control" placeholder="video link">
                                         <button id="queue-button" type="button" class="btn btn-primary">Submit</button>
                                     </form>    
                                     {% endif %}                            
@@ -112,7 +112,7 @@
                                     
                                     {% if not current_user.is_anonymous %} 
                                     <form>
-                                        <input id="message-field" class="col" placeholder="Message">
+                                        <input id="message-field" class="col form-control" placeholder="Message">
                                         <button id="message-button" type="button" class="btn btn-primary">Send</button>
                                     </form>
                                     {% endif%}

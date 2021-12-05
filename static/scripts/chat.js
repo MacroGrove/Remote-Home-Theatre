@@ -7,9 +7,9 @@ window.addEventListener("DOMContentLoaded", function() {
     messageButton.addEventListener("click", postMessage);
 });
 
-setInterval(function() {
-    updateMessages()
-  }, 3000);
+// setInterval(function() {
+//     updateMessages()
+//   }, 3000);
 
 // let timer = new Timer(updateMessages, 2000,-1);
 

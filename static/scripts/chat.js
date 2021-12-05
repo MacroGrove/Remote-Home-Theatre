@@ -7,6 +7,12 @@ window.addEventListener("DOMContentLoaded", function() {
     messageButton.addEventListener("click", postMessage);
 });
 
+setInterval(function() {
+    updateMessages()
+  }, 3000);
+
+// let timer = new Timer(updateMessages, 2000,-1);
+
 // load messages from database
 async function loadMessages() {
 
@@ -22,6 +28,31 @@ async function loadMessages() {
         .then(messageData => {
             for (const message of messageData.messages) {
                 insertMessage(message);
+            }
+        })
+        .catch(error => {
+            console.log("Message Fetch Failed: ", error);
+        });
+}
+
+// update messages from database
+async function updateMessages() {
+
+    /* Steps
+        1. get the articleID from the DOM so correct comments can be loaded
+        2. fetch the comments list from the server
+        3. insert every comment from this list into the comments section
+    */
+    
+    const roomID = document.getElementById("roomID").value;
+
+    return fetch(`/api/v1/messages/${roomID}/`)
+        .then(validateJSON)
+        .then(messageData => {
+            for (const message of messageData.messages) {
+                if(document.getElementById(message.id) == null) {
+                    insertMessage(message);
+                }
             }
         })
         .catch(error => {
@@ -47,9 +78,14 @@ async function insertMessage(message) {
         const head = document.createElement("b");
         head.innerText = message.user.username + " " + message.timestamp;
         const body = document.createElement("p");
+        body.setAttribute("id", message.id)
         body.innerText = message.message;
         chat.appendChild(head);
         chat.appendChild(body);
+
+        // Clear message field
+        document.getElementById("message-field").value = "";
+        updateMessages()
     }
 }
 
@@ -97,3 +133,57 @@ function validateJSON(response) {
         return Promise.reject(response);
     }
 }
+
+function Timer(funct, delayMs, times)
+{
+  if(times==undefined)
+  {
+    times=-1;
+  }
+  if(delayMs==undefined)
+  {
+    delayMs=10;
+  }
+  this.funct=funct;
+  var times=times;
+  var timesCount=0;
+  var ticks = (delayMs/10)|0;
+  var count=0;
+  Timer.instances.push(this);
+
+  this.tick = function()
+  {
+    if(count>=ticks)
+    {
+      this.funct();
+      count=0;
+      if(times>-1)
+      {
+        timesCount++;
+        if(timesCount>=times)
+        {
+          this.stop();
+        }
+      }
+    }
+    count++; 
+  };
+
+  this.stop=function()
+  {
+    var index = Timer.instances.indexOf(this);
+    Timer.instances.splice(index, 1);
+  };
+}
+
+Timer.instances=[];
+
+Timer.ontick=function()
+{
+  for(var i in Timer.instances)
+  {
+    Timer.instances[i].tick();
+  }
+};
+
+window.setInterval(Timer.ontick, 10);

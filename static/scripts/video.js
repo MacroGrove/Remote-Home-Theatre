@@ -8,14 +8,14 @@ window.addEventListener("DOMContentLoaded", function() {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   
 
-  //onYouTubeIframeAPIReady()
+  onYouTubeIframeAPIReady()
 
 
 });
 
-setInterval(function() {
-  onYouTubeIframeAPIReady()
-}, 3000);
+// setInterval(function() {
+//   onYouTubeIframeAPIReady()
+// }, 3000);
 
 
 

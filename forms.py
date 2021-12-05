@@ -16,7 +16,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField("Join")
 
 class VideoForm(FlaskForm):
-    video = StringField("Enter video link: ", id="url-field")
+    video = StringField("Enter video link: ", id="video-field")
     submit = SubmitField("Submit", id="video-button")
 
 class RoomForm(FlaskForm):

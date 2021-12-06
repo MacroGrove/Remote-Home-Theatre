@@ -29,6 +29,31 @@ async function loadMessages() {
         });
 }
 
+// update messages from database
+async function updateMessages() {
+
+    /* Steps
+        1. get the articleID from the DOM so correct comments can be loaded
+        2. fetch the comments list from the server
+        3. insert every comment from this list into the comments section
+    */
+    
+    const roomID = document.getElementById("roomID").value;
+
+    return fetch(`/api/v1/messages/${roomID}/`)
+        .then(validateJSON)
+        .then(messageData => {
+            for (const message of messageData.messages) {
+                if(document.getElementById(message.id) == null) {
+                    insertMessage(message);
+                }
+            }
+        })
+        .catch(error => {
+            console.log("Message Fetch Failed: ", error);
+        });
+}
+
 /**
  * Asynchronously add a div with all messagse from db to the page.
  * 
@@ -47,9 +72,14 @@ async function insertMessage(message) {
         const head = document.createElement("b");
         head.innerText = message.user.username + " " + message.timestamp;
         const body = document.createElement("p");
+        body.setAttribute("id", message.id)
         body.innerText = message.message;
         chat.appendChild(head);
         chat.appendChild(body);
+
+        // Clear message field
+        document.getElementById("message-field").value = "";
+        updateMessages()
     }
 }
 

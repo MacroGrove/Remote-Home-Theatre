@@ -43,30 +43,22 @@
             
             <!-- Log In Form -->
             <div class="container-fluid">
-                <form method="post" class="mx-auto my-5 w-50">
+                <form method="POST" class="mx-auto my-5 w-50">
                     <div class="form-group">
                         {{ form.hidden_tag() }}
                         <div class="row justify-content-center my-4"> 
-                            <div class="d-grid col-6">
-                                {{ form.email.label(class="text-center") }}
-                                {{ form.email(class="form-control") }}
-                            </div>
+                            {{ form.email.label(class="text-center mb-3") }}
+                            {{ form.email(class="form-control") }}
                         </div>
                         <div class="row justify-content-center my-4"> 
-                            <div class="d-grid col-6">
-                                {{ form.password.label(class="text-center") }}
-                                {{ form.password(class="form-control") }}
-                            </div>
+                            {{ form.password.label(class="text-center mb-3") }}
+                            {{ form.password(class="form-control") }}
                         </div>
                         <div class="row justify-content-center my-4"> 
-                            <div class="d-grid col-6">
-                                {{ form.submit(class="btn btn-primary") }}
-                            </div>
+                            {{ form.submit(class="btn btn-primary") }}
                         </div>
                         <div class="row justify-content-center my-4">
-                            <div class="d-grid col-6">
-                                <a href="{{url_for('get_reset_request')}}" class="link-primary">Forgot Password?</a>
-                            </div>
+                            <a href="{{url_for('get_reset_request')}}" class="link-primary">Forgot Password?</a>
                         </div>
                     </div>
                 </form>

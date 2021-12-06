@@ -16,7 +16,7 @@
     </head>
     <body>
         <header>
-            <div class="container">
+            <div class="container-fluid">
                 {% for message in get_flashed_messages() %}
                     <div class="alert alert-danger" role="alert">
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="&times;"></button>
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row align-items-start">
                     <div class="col">  
                         {% if not current_user.is_anonymous %}                     
@@ -73,7 +73,7 @@
                     </div>
     
                     <!-- Chat and Queue -->
-                    <div class="col">
+                    <div class="col float-right">
                         <ul class="nav nav-tabs" id="tab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="queue-tab" data-bs-toggle="tab" data-bs-target="#queue" type="button" role="tab" aria-controls="queue" aria-selected="true">Queue</button>
@@ -123,7 +123,7 @@
                 </div>
             </div>
         </main>
-        <footer class="bg-primary mt-auto">
+        <footer class="bg-primary mt-auto fixed-bottom">
             Created by Dumbledorf Stonks ©
         </footer>
     </body>

@@ -36,13 +36,13 @@ async function insertVideo(video) {
     queue.appendChild(item);
 }
 
-// send message to database
+// send queued video to database
 async function storeQueueVideo() {
     /* Steps
-        1. get the roomID and comment text from the DOM
-        2. create a new comment object to be posted
+        1. get the roomID and url text from the DOM
+        2. create a new url object to be posted
         3. create a new POST fetch request
-        4. once POST is fulfilled, insert comment into the page
+        4. once POST is fulfilled, insert a url into the page
     */
 
     const roomID = document.getElementById("roomID").value;

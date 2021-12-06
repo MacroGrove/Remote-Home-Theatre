@@ -78,8 +78,8 @@ async function insertMessage(message) {
         chat.appendChild(body);
 
         // Clear message field
-        document.getElementById("message-field").value = "";
-        updateMessages()
+        let field = document.getElementById("message-field");
+        field.value = "";
     }
 }
 

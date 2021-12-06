@@ -10,9 +10,6 @@
         <script src="/static/scripts/chat.js"></script>
         <script src="/static/scripts/queue.js"></script>
         <script src="/static/scripts/video.js"></script>
-
-
-
     </head>
     <body>
         <header>
@@ -26,7 +23,7 @@
             </div>
         </header>
         <main>
-             <!-- Navigation -->
+                {# Navigation #}
              <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
                 <a class="navbar-brand" href="/home/">Remote Home Theatre</a>
                 <div class="d-flex justify-content-end"></div>
@@ -49,20 +46,10 @@
             </div>
 
             <div class="container-fluid">
-                <div class="row align-items-start">
+                <div class="row align-items-start">                  
+                    {# Video #}
                     <div id="theatre" class="col">  
-                        {% if not current_user.is_anonymous %}                     
-                        <!-- Link Input -->
-                        <form method="POST">
-                            {{ form.hidden_tag() }}
 
-                            {{ form.video(class="form-control") }}
-
-                            {{ form.submit(class="btn btn-primary") }}
-                        </form>
-                        {% endif %}
-                        
-                        <!-- Video  -->
                         {% if "youtube" in video %}
                         <!-- The <iframe> (and video player) replaces this <div> tag. -->
                         <div id="player"></div>
@@ -71,9 +58,21 @@
                         <iframe src="{{video}}" width="854" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                         {% endif %}
                     </div>
-    
-                    <!-- Chat and Queue -->
-                    <div class="col float-right">
+
+                    {# Tab Base #}
+                    <div class="col">
+
+                        {% if not current_user.is_anonymous %}                     
+                        <!-- Link Input -->
+                        <form method="POST">
+                            {{ form.hidden_tag() }}
+        
+                            {{ form.video(class="form-control col-sm-3") }}
+        
+                            {{ form.submit(class="btn btn-primary-outline col-sm-3") }}
+                        </form>
+                        {% endif %}
+                  
                         <ul class="nav nav-tabs" id="tab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="queue-tab" data-bs-toggle="tab" data-bs-target="#queue" type="button" role="tab" aria-controls="queue" aria-selected="true">Queue</button>
@@ -83,36 +82,34 @@
                             </li>
                         </ul>    
 
+                        {# Tab Content #}
                         <div class="tab-content" id="myTabContent">
+
                             <input id="userID" type="hidden" value={{current_user}}>
                             <input id="roomID" type="hidden" value={{room.id}}>
 
-                            <!-- QUEUE -->
+                            {# Queue #}
                             <div class="tab-pane fade show active" id="queue" role="tabpanel" aria-labelledby="queue-tab">
                                 <div>
-                                    <div id="queue-list">
-                                        
-                                    </div>
+                                    <div id="queue-list"></div>
                                     
                                     {% if not current_user.is_anonymous %} 
                                     <form>
-                                        <input id="queue-field" class="col form-control" placeholder="video link">
+                                        <input id="queue-field" class="form-control mb-3" placeholder="Link">
                                         <button id="queue-button" type="button" class="btn btn-primary">Submit</button>
                                     </form>    
                                     {% endif %}                            
                                 </div>
                             </div>
 
-                            <!-- CHAT  -->
+                            {# Chat #}
                             <div class="tab-pane fade" id="chat" role="tabpanel" aria-labelledby="chat-tab">
                                 <div>
-                                    <div id="message-list">
-                                        <!-- add scrollable area -->
-                                    </div>
+                                    <div id="message-list"></div>
                                     
                                     {% if not current_user.is_anonymous %} 
                                     <form>
-                                        <input id="message-field" class="col form-control" placeholder="Message">
+                                        <input id="message-field" class="form-control mb-3" placeholder="Message">
                                         <button id="message-button" type="button" class="btn btn-primary">Send</button>
                                     </form>
                                     {% endif%}

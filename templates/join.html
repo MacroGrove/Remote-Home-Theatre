@@ -43,35 +43,35 @@
 
             <!-- Join Form -->
             <div class="container-fluid">
-                <form method="post" class="mx-auto w-50">
+                <form method="POST" class="mx-auto w-50">
                     <div class="form-group">
                         {{ form.hidden_tag() }}
                         <div class="row justify-content-center my-4"> 
-                            <div class="d-grid col-6">
-                                {{ form.email.label(class="text-center") }}
+                            <div class="d-grid">
+                                {{ form.email.label(class="text-center mb-3") }}
                                 {{ form.email(class="form-control") }}
                             </div>
                         </div>
                         <div class="row justify-content-center my-4"> 
-                            <div class="d-grid col-6">
-                                {{ form.username.label(class="text-center") }}
+                            <div class="d-grid">
+                                {{ form.username.label(class="text-center mb-3") }}
                                 {{ form.username(class="form-control") }}
                             </div>
                         </div>
                         <div class="row justify-content-center my-4"> 
-                            <div class="d-grid col-6">
-                                {{ form.password.label(class="text-center") }}
+                            <div class="d-grid">
+                                {{ form.password.label(class="text-center mb-3") }}
                                 {{ form.password(class="form-control") }}
                             </div>
                         </div>
                         <div class="row justify-content-center my-4"> 
-                            <div class="d-grid col-6">
-                                {{ form.confirm_password.label(class="text-center") }}
+                            <div class="d-grid">
+                                {{ form.confirm_password.label(class="text-center mb-3") }}
                                 {{ form.confirm_password(class="form-control") }}
                             </div>
                         </div>
                         <div class="row justify-content-center my-4"> 
-                            <div class="d-grid col-6">
+                            <div class="d-grid">
                                 {{ form.submit(class="btn btn-primary") }}
                             </div>
                         </div>

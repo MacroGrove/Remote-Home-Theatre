@@ -91,7 +91,7 @@
                             {# Queue #}
                             <div class="tab-pane fade show active" id="queue" role="tabpanel" aria-labelledby="queue-tab">
                                 <div>
-                                    <div id="queue-list" class="overflow-auto"></div>
+                                    <div id="queue-list"></div>
                                     
                                     {% if not current_user.is_anonymous %} 
                                     <form>
@@ -105,7 +105,7 @@
                             {# Chat #}
                             <div class="tab-pane fade" id="chat" role="tabpanel" aria-labelledby="chat-tab">
                                 <div>
-                                    <div id="message-list" class="overflow-auto"></div>
+                                    <div id="message-list"></div>
                                     
                                     {% if not current_user.is_anonymous %} 
                                     <form>

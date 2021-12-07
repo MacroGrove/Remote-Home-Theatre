@@ -77,7 +77,7 @@ async function patchYouTubeVideo() {
 }
 
 //API calls this function when the video player is ready.
-function onPlayerReady(event) {
+async function onPlayerReady(event) {
   event.target.playVideo();
 }
 
@@ -91,6 +91,11 @@ function onPlayerReady(event) {
 //    done = true;
 //  }
 //}
+
+async function playVideo() {
+  player.playVideo();
+}
+
 async function stopVideo() {
   player.stopVideo();
 }

@@ -403,7 +403,7 @@ def lobby():
                 flash(f"{field} - {error}")
             return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
     
-@app.route('/lobby/', methods=['DELETE'])
+@app.route('/lobby/delete/', methods=['POST'])
 def delete():
     delete = DeleteRoomForm()
 

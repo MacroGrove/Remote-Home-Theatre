@@ -54,7 +54,7 @@
                         <!-- The <iframe> (and video player) replaces this <div> tag. -->
                         <div id="player"></div>
                         <!-- <iframe width="854" height="480" src="{{video}}"></iframe> -->
-                        {% else %}
+                        {% elif "vimeo" in video" %}
                         <iframe src="{{video}}" width="854" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                         {% else %}
                         <video width="683" height="384" controls>

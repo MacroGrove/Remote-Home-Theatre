@@ -361,11 +361,11 @@ def lobby():
     #User can be accessed by current_user in templates
     form = NewRoomForm()
     delete = DeleteRoomForm()
+    room_history = []
 
     if request.method == 'GET':  
-         # Convert user's room history into a list of rooms
-        room_history = []
 
+         # Convert user's room history into a list of rooms
         for r in session.get('room_history', []):
             room_history.append(Room.query.filter_by(code=r).first())
             print(f"Room: {r}")
@@ -375,9 +375,9 @@ def lobby():
     
     if request.method == 'POST':
 
-        if delete.validate():
-            Room.delete_room(request.form.get("delete-id"))
-            return redirect(f"/lobby/")
+        # if delete.validate():
+        #     Room.delete_room(request.form.get("delete-id"))
+        #     return redirect(f"/lobby/")
 
         if form.validate():
             #Add room to user's table
@@ -396,21 +396,21 @@ def lobby():
                 return redirect('/lobby/')
             else: 
                 flash("You have too many rooms to add another")
-                return render_template('lobby.html', form=form)
+                return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
         else: 
             flash("You have to name your room and give it a description")
             for field, error in form.errors.items():
                 flash(f"{field} - {error}")
-            return render_template('lobby.html', form=form)
+            return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
     
-# @app.route('/lobby/delete/', methods=['DELETE'])
-# def delete():
-#     delete = DeleteRoomForm()
+@app.route('/lobby/', methods=['DELETE'])
+def delete():
+    delete = DeleteRoomForm()
 
-#     if delete.validate():
-#         Room.delete_room(request.form.get("delete-id"))
-#         print("deleting")
-#         return redirect(f"/lobby/")
+    if delete.validate():
+        Room.delete_room(request.form.get("delete-id"))
+        print("deleting")
+        return redirect(f"/lobby/")
 
 # ROOM ROUTE
 

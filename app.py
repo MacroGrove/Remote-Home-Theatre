@@ -355,7 +355,7 @@ def register():
 
 # LOBBY ROUTE
 
-@app.route('/lobby/', methods=['GET', 'POST'])
+@app.route('/lobby/', methods=['GET', 'POST', 'DELETE'])
 @login_required
 def lobby():
     #User can be accessed by current_user in templates
@@ -385,6 +385,7 @@ def lobby():
             if len(userRooms) < 6:
                 # generate access code
                 code = rstr.xeger(r'^[a-zA-Z0-9]{8}$')
+                print(f"Code: {code}")
                 one_instance = Room(user_id=current_user.id,  
                     code=code, title=form.name.data, description=form.description.data)
                 
@@ -400,7 +401,23 @@ def lobby():
             for field, error in form.errors.items():
                 flash(f"{field} - {error}")
             return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
+    
+    if request.method == 'DELETE':
+        delete = DeleteRoomForm()
+        
+        if delete.validate():
+            Room.delete_room(request.form.get("delete-id"))
+            print("deleting")
+            return redirect(f"/lobby/")
 
+@app.route('/lobby/delete/', methods=['DELETE'])
+def delete():
+    delete = DeleteRoomForm()
+
+    if delete.validate():
+        Room.delete_room(request.form.get("delete-id"))
+        print("deleting")
+        return redirect(f"/lobby/")
 
 # ROOM ROUTE
 

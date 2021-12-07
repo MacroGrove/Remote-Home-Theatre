@@ -355,7 +355,7 @@ def register():
 
 # LOBBY ROUTE
 
-@app.route('/lobby/', methods=['GET', 'POST', 'DELETE'])
+@app.route('/lobby/', methods=['GET', 'POST'])
 @login_required
 def lobby():
     #User can be accessed by current_user in templates
@@ -368,15 +368,12 @@ def lobby():
 
         for r in session.get('room_history', []):
             room_history.append(Room.query.filter_by(code=r).first())
-        # print(room_history)
+            print(f"Room: {r}")
+        print(room_history)
 
         return render_template('lobby.html', form=form, delete=delete, room_history=room_history) #You can access current_user here
     
     if request.method == 'POST':
-        room_history = []
-
-        for r in session.get('room_history', []):
-            room_history.append(Room.query.filter_by(code=r).first())
 
         if form.validate():
             #Add room to user's table
@@ -395,20 +392,20 @@ def lobby():
                 return redirect('/lobby/')
             else: 
                 flash("You have too many rooms to add another")
-                return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
+                return render_template('lobby.html', form=form)
         else: 
             flash("You have to name your room and give it a description")
             for field, error in form.errors.items():
                 flash(f"{field} - {error}")
-            return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
+            return render_template('lobby.html', form=form)
     
-    if request.method == 'DELETE':
-        delete = DeleteRoomForm()
+    # if request.method == 'DELETE':
+    #     delete = DeleteRoomForm()
         
-        if delete.validate():
-            Room.delete_room(request.form.get("delete-id"))
-            print("deleting")
-            return redirect(f"/lobby/")
+    #     if delete.validate():
+    #         Room.delete_room(request.form.get("delete-id"))
+    #         print("deleting")
+    #         return redirect(f"/lobby/")
 
 @app.route('/lobby/delete/', methods=['DELETE'])
 def delete():
@@ -436,6 +433,14 @@ def room(roomCode): # remove 0 after testing!
     uform = VideoUploadForm()
 
     if request.method == 'GET':
+        
+        if "room_history" in session:
+            if room.code not in session['room_history']:
+                session['room_history'].append(room.code)
+        else:
+            session['room_history'] = []
+            session['room_history'].append(room.code)
+
         video = room.url
         # print(video)
         if video != "":

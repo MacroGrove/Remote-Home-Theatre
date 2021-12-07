@@ -17,12 +17,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
 from wtforms.fields.core import Label
 from hasher import Hasher
-from forms import LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm
+from forms import LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm, VideoUploadForm
 from datetime import datetime
 import yagmail
 import jwt
 import time
 import rstr
+from werkzeug.utils import secure_filename
 
 
 ###############################################################################
@@ -42,11 +43,17 @@ with open(pepfile, 'rb') as fin:
 
 pwd_hasher = Hasher(pepper_key)
 
+UPLOAD_FOLDER = os.path.join(scriptdir, "static\\uploads")
+ALLOWED_EXTENSIONS = {'mp4'}
+
+
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE'] = 0
 app.config['SECRET_KEY'] = 'bellbottomedbabybutterbellybuttonsimpletonbub'
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{dbpath}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 # Getting the database object handle from the app
 db = SQLAlchemy(app)
@@ -392,49 +399,68 @@ def room(roomCode): # remove 0 after testing!
     #User can be accessed by current_user in templates
 
     room = Room.query.filter_by(code=roomCode).first()
+    if room is None:
+        flash('This room does not exist.')
+        return redirect(url_for('lobby'))
     # room = Room.query.get_or_404(roomCode)
     form = VideoForm()
+    uform = VideoUploadForm()
 
     if request.method == 'GET':
         video = room.url
-        print(video)
-        
+        # print(video)
         if video != "":
             if 'youtube' in video:
                 video = video.replace("watch?v=", "embed/")
             elif 'vimeo' in video:
                 video = video.replace("vimeo.com","player.vimeo.com/video")
-            else:
+            elif 'uploads' not in video:
                 flash('Something went wrong.')
-                # return redirect(url_for('room'))
-        
-        # Save user's room history
-        if "room_history" in session:
-            if room.code not in session['room_history']:
-                session['room_history'].append(room.code)
-                # print(room.code)
+                return redirect(f"/room/{room.code}/")
+            return render_template('room.html', room=room, video=video, form=form, uform=uform)
         else:
-            session['room_history'] = []
-            session['room_history'].append(room.code)
-        # print(session['room_history'])
+            return render_template('room.html', room=room, video="", form=form, uform=uform)
 
-        return render_template('room.html', room=room, video=video, form=form)
-        
-    # Change room video
-    if form.validate():
+    # submitting url to video
+    if form.validate() and form.submit.data:
         if 'youtube' not in form.video.data and 'vimeo' not in form.video.data:
             flash('The url was invalid.')
-            # return redirect(url_for('.room'))
+            return redirect(f"/room/{room.code}/")
         # session['video'] = form.video.data
         room.url = form.video.data
         one_instance = Queue(url=form.video.data, timestamp=datetime.utcnow(), room=room.id)
         db.session.add(one_instance)
         db.session.commit()
-        return redirect(f"/room/{roomCode}/")
-    else:
+        print("HERE")
+        return redirect(f"/room/{room.code}/")
+    elif form.submit.data:
         for field, error in form.errors.items():
             flash(f"{field}: {error}")
-        return redirect(url_for("room"))
+        print("NOW HERE")
+        return redirect(f"/room/{room.code}/")
+    
+    # uploading video
+    if uform.validate() and uform.submitVideo.data:
+        if not request.files[uform.video.name]:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files[uform.video.name]
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        room.url = f"/static/uploads/{filename}"
+        one_instance = Queue(url=room.url, timestamp=datetime.utcnow(), room=room.id)
+        db.session.add(one_instance)
+        db.session.commit()
+        print("AND NOW HERE")
+        return redirect(f"/room/{room.code}/")
+    elif uform.submitVideo.data:
+        for field, error in form.errors.items():
+            flash(f"{field}: {error}")
+        print("HERE AND NOW HERE")
+        return redirect(f"/room/{room.code}/")
+    flash('Something went wrong...')
+    print("BUT HERE AND NOW HERE")
+    return redirect(url_for('lobby'))
 
 # RESETING PASSWORD ROUTES
 

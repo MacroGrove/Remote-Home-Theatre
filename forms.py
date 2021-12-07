@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import EqualTo, InputRequired, Email, Optional
-from wtforms.fields.simple import PasswordField, SubmitField, EmailField, StringField
+from wtforms.fields.simple import FileField, PasswordField, SubmitField, EmailField, StringField
 
 class LoginForm(FlaskForm):
     email = EmailField("Enter email: ", validators=[InputRequired(), Email()])
@@ -36,3 +36,7 @@ class ResetPasswordForm(FlaskForm):
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email()])
     submit = SubmitField('Request Password Reset')
+
+class VideoUploadForm(FlaskForm):
+    video = FileField("Video", validators=[InputRequired()])
+    submitVideo = SubmitField("Submit")

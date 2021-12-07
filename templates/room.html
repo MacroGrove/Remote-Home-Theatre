@@ -29,17 +29,17 @@
                 <div class="d-flex justify-content-end"></div>
                     {% if current_user.is_authenticated %}
                     <div class="nav-link">
-                        <a class="btn btn-light" href="/lobby/" role="button">Lobby</a>
+                        <a class="btn btn-light glow-button" href="/lobby/" role="button">Lobby</a>
                     </div>
                     <div class="nav-link">
-                        <a class="btn btn-light" href="/logout/" role="button">Logout</a>
+                        <a class="btn btn-light glow-button" href="/logout/" role="button">Logout</a>
                     </div>
                     {% else %}
                     <div class="nav-link">
-                        <a class="btn btn-light" href="/login/" role="button">Login</a>
+                        <a class="btn btn-light glow-button" href="/login/" role="button">Login</a>
                     </div>
                     <div class="nav-link">
-                        <a class="btn btn-light" href="/register/" role="button">Join</a>
+                        <a class="btn btn-light glow-button" href="/register/" role="button">Join</a>
                     </div>
                     {% endif %}
                 </div>
@@ -56,6 +56,10 @@
                         <!-- <iframe width="854" height="480" src="{{video}}"></iframe> -->
                         {% else %}
                         <iframe src="{{video}}" width="854" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                        {% else %}
+                        <video width="683" height="384" controls>
+                            <source src="{{video}}" type="video/mp4">
+                        </video>
                         {% endif %}
                     </div>
 
@@ -71,6 +75,38 @@
         
                             {{ form.submit(class="btn btn-primary-outline col-sm-3") }}
                         </form>
+                        
+                        {# Uploading Media #}
+                        <a type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#uploadVideoForm">Upload a video</a>
+                        <div class="modal fade" id="uploadVideoForm" tabindex="-1" aria-labelledby="uploadVideoLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="uploadVideoLabel">Upload Video</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Submit"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                {{ uform.hidden_tag() }}
+                                                <div class="row justify-content-center my-5"> 
+                                                    <div class="d-grid col-6">
+                                                        {{ uform.video.label(class="text-center") }}
+                                                        {{ uform.video(class="form-control") }}
+                                                    </div>
+                                                </div>
+                                                <div class="row justify-content-center my-5"> 
+                                                    <div class="d-grid col-6">
+                                                        {{ uform.submitVideo(class="btn btn-primary", method="get") }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         {% endif %}
                   
                         <ul class="nav nav-tabs" id="tab" role="tablist">
@@ -120,8 +156,8 @@
                 </div>
             </div>
         </main>
-        <footer class="bg-primary mt-auto fixed-bottom">
-            Created by Dumbledorf Stonks ©
+        <footer class="container-fluid p-2 m-1 border-top box-shadow">
+            <h6>Created by Dumbledorf Stonks © 2021</h6>
         </footer>
     </body>
 </html>

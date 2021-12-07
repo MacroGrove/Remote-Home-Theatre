@@ -120,10 +120,9 @@
             </div>
 
             
-            <h4 class="text-center">Room History</h4>
-            
-
             {# Room History #}
+            <h4 class="text-center my-3">Room History</h4>
+            
             <div class="container-fluid">
                 {% for room in room_history %}
                 <div class="card-deck mb-3 text-center">
@@ -131,19 +130,20 @@
                         <div class="card mb-4 box-shadow">
                             <div class="card-header">{{ room.id }}</div>
                                 <div class="card-body">
-                                <h5 class="card-title">{{ room.title }}</h5>
-                                <p>Access Code: {{ room.code }}</p>
-                                {% if room.description %}
-                                <p class="card-text"> {{ room.description }}</p>
-                                {% endif %}
+                                    <h5 class="card-title">{{ room.title }}</h5>
+                                    <p>Access Code: {{ room.code }}</p>
                                 
-                                <a href="/room/{{room.code}}" class="container-fluid btn btn-outline-primary text-center">Enter</a>
+                                    {% if room.description %}
+                                    <p class="card-text"> {{ room.description }}</p>
+                                    {% endif %}
+                                    
+                                    <a href="/room/{{room.code}}" class="container-fluid btn btn-outline-primary text-center">Enter</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 {% endfor %} 
-            </div> 
+            </div>
         </main>
         <footer class="bg-primary">
             Created by Dumbledorf Stonks ©

@@ -373,10 +373,12 @@ def lobby():
         return render_template('lobby.html', form=form, delete=delete, room_history=room_history) #You can access current_user here
     
     if request.method == 'POST':
-        if delete.validate():
-            Room.delete_room(request.form.get("delete-id"))
-            return redirect(f"/lobby/")
-        elif form.validate():
+        room_history = []
+
+        for r in session.get('room_history', []):
+            room_history.append(Room.query.filter_by(code=r).first())
+
+        if form.validate():
             #Add room to user's table
             userRooms = Room.query.filter_by(user_id=current_user.id).all()
 
@@ -392,12 +394,13 @@ def lobby():
                 return redirect('/lobby/')
             else: 
                 flash("You have too many rooms to add another")
-                return render_template('lobby.html', form=form)
+                return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
         else: 
             flash("You have to name your room and give it a description")
             for field, error in form.errors.items():
                 flash(f"{field} - {error}")
-            return render_template('lobby.html', form=form)
+            return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
+
 
 # ROOM ROUTE
 

@@ -17,7 +17,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
 from wtforms.fields.core import Label
 from hasher import Hasher
-from forms import LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm, VideoUploadForm
+from forms import DeleteRoomForm, LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm, VideoUploadForm
 from datetime import datetime
 import yagmail
 import jwt
@@ -170,6 +170,11 @@ class Room(db.Model):
             roomID=data['roomID'],
             url=data['url']
         )
+
+    @staticmethod
+    def delete_room(id):
+        Room.query.filter_by(id=id).delete()
+        db.session.commit()
 
 # Create a database model for messages
 class Message(db.Model):
@@ -355,19 +360,23 @@ def register():
 def lobby():
     #User can be accessed by current_user in templates
     form = NewRoomForm()
+    delete = DeleteRoomForm()
 
     if request.method == 'GET':  
          # Convert user's room history into a list of rooms
         room_history = []
+
         for r in session.get('room_history', []):
             room_history.append(Room.query.filter_by(code=r).first())
-        
-        print(room_history)
+        # print(room_history)
 
-        return render_template('lobby.html', form=form, room_history=room_history) #You can access current_user here
+        return render_template('lobby.html', form=form, delete=delete, room_history=room_history) #You can access current_user here
     
     if request.method == 'POST':
-        if form.validate():
+        if delete.validate():
+            Room.delete_room(request.form.get("delete-id"))
+            return redirect(f"/lobby/")
+        elif form.validate():
             #Add room to user's table
             userRooms = Room.query.filter_by(user_id=current_user.id).all()
 

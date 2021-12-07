@@ -73,9 +73,9 @@
         
                             {{ form.video(class="form-control col-sm-3", placeholder="Paste YouTube Link Here") }}
         
-                            {{ form.submit(class="btn btn-primary my-3") }}
+                            {{ form.submit(class="btn btn-primary my-3 glow-button") }}
 
-                            <a type="button" class="btn btn-primary my-3" data-bs-toggle="modal" data-bs-target="#uploadVideoForm">Upload Home Video</a>
+                            <a type="button" class="btn btn-primary my-3 glow-button" data-bs-toggle="modal" data-bs-target="#uploadVideoForm">Upload Home Video</a>
                         </form>
                         
                         {# Uploading Media #}
@@ -84,7 +84,7 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="uploadVideoLabel">Upload Home Video</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Submit"></button>
+                                        <button type="button" class="btn-close glow-button" data-bs-dismiss="modal" aria-label="Submit"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form method="post" enctype="multipart/form-data">
@@ -98,7 +98,7 @@
                                                 </div>
                                                 <div class="row justify-content-center my-5"> 
                                                     <div class="d-grid col-6">
-                                                        {{ uform.submitVideo(class="btn btn-primary", method="get") }}
+                                                        {{ uform.submitVideo(class="btn btn-primary glow-button", method="get") }}
                                                     </div>
                                                 </div>
                                             </div>

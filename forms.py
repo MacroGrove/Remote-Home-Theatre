@@ -3,21 +3,21 @@ from wtforms.validators import EqualTo, InputRequired, Email, Optional
 from wtforms.fields.simple import FileField, PasswordField, SubmitField, EmailField, StringField
 
 class LoginForm(FlaskForm):
-    email = EmailField("Enter email: ", validators=[InputRequired(), Email()])
+    email = EmailField("Enter Email", validators=[InputRequired(), Email()])
     # username = StringField("Enter username: ", validators=[InputRequired()])
-    password = PasswordField("Enter password: ", validators=[InputRequired()])
+    password = PasswordField("Enter Password", validators=[InputRequired()])
     submit = SubmitField("Log In")
 
 class RegisterForm(FlaskForm):
-    username = StringField("Enter username: ", validators=[InputRequired()])
-    password = PasswordField("Enter password: ", validators=[InputRequired()])
-    confirm_password = PasswordField("Confirm password: ", validators=[InputRequired(), EqualTo('password')])
-    email = EmailField("Enter email: ", validators=[InputRequired(), Email()])
+    username = StringField("Enter Username", validators=[InputRequired()])
+    password = PasswordField("Enter Password", validators=[InputRequired()])
+    confirm_password = PasswordField("Confirm Password", validators=[InputRequired(), EqualTo('password')])
+    email = EmailField("Enter Email", validators=[InputRequired(), Email()])
     submit = SubmitField("Join")
 
 class VideoForm(FlaskForm):
-    video = StringField("Enter video link: ", id="video-field")
-    submit = SubmitField("Submit", id="video-button")
+    video = StringField("Enter Video Link", id="video-field")
+    submit = SubmitField("Load YouTube Link", id="video-button")
 
 class RoomForm(FlaskForm):
     room =  StringField("Room Code", validators=[InputRequired()])
@@ -29,8 +29,8 @@ class NewRoomForm(FlaskForm):
     submit = SubmitField("Create")
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField("Enter new password: ", validators=[InputRequired()])
-    confirm_password = PasswordField("Confirm password: ", validators=[InputRequired(), EqualTo('password')])
+    password = PasswordField("Enter New Password", validators=[InputRequired()])
+    confirm_password = PasswordField("Confirm Password", validators=[InputRequired(), EqualTo('password')])
     submit = SubmitField("Submit")
 
 class ResetPasswordRequestForm(FlaskForm):

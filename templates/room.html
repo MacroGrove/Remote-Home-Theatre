@@ -23,8 +23,8 @@
             </div>
         </header>
         <main>
-                {# Navigation #}
-             <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+            {# Navigation #}
+            <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
                 <a class="navbar-brand" href="/home/">Remote Home Theatre</a>
                 <div class="d-flex justify-content-end"></div>
                     {% if current_user.is_authenticated %}
@@ -71,18 +71,19 @@
                         <form method="POST">
                             {{ form.hidden_tag() }}
         
-                            {{ form.video(class="form-control col-sm-3") }}
+                            {{ form.video(class="form-control col-sm-3", placeholder="Paste YouTube Link Here") }}
         
-                            {{ form.submit(class="btn btn-primary-outline col-sm-3") }}
+                            {{ form.submit(class="btn btn-primary my-3") }}
+
+                            <a type="button" class="btn btn-primary my-3" data-bs-toggle="modal" data-bs-target="#uploadVideoForm">Upload Home Video</a>
                         </form>
                         
                         {# Uploading Media #}
-                        <a type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="#uploadVideoForm">Upload a video</a>
                         <div class="modal fade" id="uploadVideoForm" tabindex="-1" aria-labelledby="uploadVideoLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="uploadVideoLabel">Upload Video</h5>
+                                        <h5 class="modal-title" id="uploadVideoLabel">Upload Home Video</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Submit"></button>
                                     </div>
                                     <div class="modal-body">
@@ -91,7 +92,7 @@
                                                 {{ uform.hidden_tag() }}
                                                 <div class="row justify-content-center my-5"> 
                                                     <div class="d-grid col-6">
-                                                        {{ uform.video.label(class="text-center") }}
+                                                        {{ uform.video.label(class="text-center my-3") }}
                                                         {{ uform.video(class="form-control") }}
                                                     </div>
                                                 </div>
@@ -131,7 +132,7 @@
                                     
                                     {% if not current_user.is_anonymous %} 
                                     <form>
-                                        <input id="queue-field" class="form-control mb-3" placeholder="Link">
+                                        <input id="queue-field" class="form-control mb-3" placeholder="Queue Link">
                                         <button id="queue-button" type="button" class="btn btn-primary">Submit</button>
                                     </form>    
                                     {% endif %}                            

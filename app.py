@@ -375,6 +375,10 @@ def lobby():
     
     if request.method == 'POST':
 
+        if delete.validate():
+            Room.delete_room(request.form.get("delete-id"))
+            return redirect(f"/lobby/")
+
         if form.validate():
             #Add room to user's table
             userRooms = Room.query.filter_by(user_id=current_user.id).all()
@@ -399,22 +403,14 @@ def lobby():
                 flash(f"{field} - {error}")
             return render_template('lobby.html', form=form)
     
-    # if request.method == 'DELETE':
-    #     delete = DeleteRoomForm()
-        
-    #     if delete.validate():
-    #         Room.delete_room(request.form.get("delete-id"))
-    #         print("deleting")
-    #         return redirect(f"/lobby/")
+# @app.route('/lobby/delete/', methods=['DELETE'])
+# def delete():
+#     delete = DeleteRoomForm()
 
-@app.route('/lobby/delete/', methods=['DELETE'])
-def delete():
-    delete = DeleteRoomForm()
-
-    if delete.validate():
-        Room.delete_room(request.form.get("delete-id"))
-        print("deleting")
-        return redirect(f"/lobby/")
+#     if delete.validate():
+#         Room.delete_room(request.form.get("delete-id"))
+#         print("deleting")
+#         return redirect(f"/lobby/")
 
 # ROOM ROUTE
 

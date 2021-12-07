@@ -52,11 +52,11 @@
                             <div class="card-header d-flex flex-row-reverse">
                                 {# Delete Room #}
                                 <!-- <a href="/lobby/{{room.code}}" method="DELETE" class="btn btn-danger"> X </a> -->
-                                <form method="DELETE" class="m-0">
+                                <form method="POST" class="m-0">
                                     <div class="form-group">
                                         {{ delete.hidden_tag() }}
                                         <input type="hidden"  name="delete-id" value="{{ room.id }}" required>
-                                        {{ delete.submit(class="btn btn-danger glow-button", method="DELETE") }}
+                                        {{ delete.submit(class="btn btn-danger glow-button", method="POST") }}
                                     </div>
                                 </form>
                             </div>

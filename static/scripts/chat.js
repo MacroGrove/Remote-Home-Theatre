@@ -4,7 +4,8 @@ window.addEventListener("DOMContentLoaded", function() {
     
     // attach an event listener to the send button to post messages
     const user = document.getElementById("userID").value;
-    if(user.is_anonymous === false) {
+    console.log(`CHAT IsAnonymous: ${user}`)
+    if(user.is_anonymous == false) {
         const messageButton = document.getElementById("message-button");
         messageButton.addEventListener("click", postMessage);
     }
@@ -82,7 +83,7 @@ async function insertMessage(message) {
 
         // Clear message field
         const user = document.getElementById("userID").value;
-        if(user.is_anonymous === false) {
+        if(user.is_anonymous == false) {
             let field = document.getElementById("message-field");
             field.value = "";
         }

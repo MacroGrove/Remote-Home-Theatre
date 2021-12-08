@@ -4,8 +4,9 @@ window.addEventListener("DOMContentLoaded", function() {
      loadQueue();
 
      // attach an event listener to the send button to post links
-     const user = document.getElementById("userID").value;
-     if(user.is_anonymous === false) {
+     const user = document.getElementById("userID");
+     console.log(`QUEUE IsAnonymous: ${user.is_anonymous}`)
+     if(user.is_anonymous == false) {
         const queueButton = document.getElementById("queue-button")
         queueButton.addEventListener("click", postQueueVideo)
      }
@@ -56,7 +57,7 @@ async function insertVideo(video) {
     queue.appendChild(item);
 
     const user = document.getElementById("userID").value;
-    if(user.is_anonymous === false) {
+    if(user.is_anonymous == false) {
         let field = document.getElementById("queue-field")
         field.value = "";
     }

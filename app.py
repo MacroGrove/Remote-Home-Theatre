@@ -555,7 +555,7 @@ def post_message(room_id):
     message.user = current_user
     db.session.add(message)
     db.session.commit()
-    return jsonify(message.to_json()), 201
+    return jsonify(message.to_json(), 201)
 
 @app.get("/api/v1/queue/<int:room_id>/")
 def get_queue(room_id):
@@ -578,7 +578,7 @@ def post_queue(room_id):
     
     db.session.add(queueVideo)
     db.session.commit()
-    return jsonify(queueVideo.to_json()), 201
+    return jsonify(queueVideo.to_json(), 201)
 
 @app.get("/api/v1/video/<int:room_id>/")
 def get_video(room_id):
@@ -586,7 +586,7 @@ def get_video(room_id):
 
     video = room.url
 
-    return jsonify(room.to_json()), 201
+    return jsonify(room.to_json(), 201)
 
 @app.patch("/api/v1/video/<int:room_id>/")
 def patch_video(room_id):

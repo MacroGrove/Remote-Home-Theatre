@@ -236,7 +236,7 @@ db.create_all()
 user = User(id=0, email="moodyms18@gcc.edu", username="blah", password="moodyms18@gcc.edu", is_verified=True)
 
 # user, id, title, url
-room = Room(user=user, id=0, code="abcdfghjkl", title="Test Room", description="", url="")
+room = Room(user=user, id=0, code="abcdefgh", title="Test Room", description="", url="")
 
 # userID, roomID, id, timestamp, message
 message = Message(user=user, room=room, id=0, timestamp=datetime.utcnow(), message="Test message! I hope it works.")

@@ -8,8 +8,11 @@ window.addEventListener("DOMContentLoaded", function() {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   
   // getYouTubeVideo()
-  const videoButton = document.getElementById("video-button");
-  videoButton.addEventListener("click", postYouTubeVideo)
+  const user = document.getElementById("userID").value;
+    if(user.is_anonymous === false) {
+      const videoButton = document.getElementById("video-button");
+      videoButton.addEventListener("click", postYouTubeVideo)
+    }
 });
 
 setInterval(function() {

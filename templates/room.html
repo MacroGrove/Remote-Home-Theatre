@@ -132,12 +132,12 @@
                                 <div>
                                     <div id="queue-list"></div>
                                     
-                                    <!-- {% if not current_user.is_anonymous %}  -->
+                                    {% if not current_user.is_anonymous %} 
                                     <form>
                                         <input id="queue-field" class="form-control mb-3" placeholder="Queue Link">
                                         <button id="queue-button" type="button" class="btn btn-primary">Submit</button>
                                     </form>   
-                                    <!-- {% endif %} -->
+                                    {% endif %}
                                 </div>
                             </div>
 
@@ -146,12 +146,12 @@
                                 <div>
                                     <div id="message-list"></div>
                                     
-                                    <!-- {% if not current_user.is_anonymous %}  -->
+                                    {% if not current_user.is_anonymous %} 
                                     <form>
                                         <input id="message-field" class="form-control mb-3" placeholder="Message">
                                         <button id="message-button" type="button" class="btn btn-primary">Send</button>
                                     </form>
-                                    <!-- {% endif%} -->
+                                    {% endif%}
                                 </div>                              
                             </div>
                         </div>

@@ -563,6 +563,14 @@ def get_reset_password(token):
 # API
 ###############################################################################
 
+@app.post("/api/v1/room/<int:room_id>/")
+def delete_room(room_id):
+    room = Room.from_json(request.get_json())
+    Room.delete_room(room.id)
+    db.session.commit()
+
+    return jsonify(room.to_json()), 201
+
 @app.get("/api/v1/messages/<int:room_id>/")
 def get_messages(room_id):
     # room = Message.query.filter_by(roomID=room_id).first()

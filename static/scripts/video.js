@@ -31,7 +31,7 @@ async function getYouTubeVideo()  {
           insertYouTubeVideo(url)
         })
         .catch(error => {
-            console.log("Message Fetch Failed: ", error);
+            console.log("Video Fetch Failed: ", error);
         });  //Create an <iframe> (and YouTube player) after the API code downloads.
 }
 
@@ -53,12 +53,24 @@ async function insertYouTubeVideo(url) {
 }
 
 async function patchYouTubeVideo() {
+  let pTime = player.getCurrentTime();
   const roomID = document.getElementById("roomID").value;
   const url = document.getElementById("video-field").value;
+
+  const user = document.getElementById("userID").value;
+  const host = document.getElementById("host").value;
+
+  if (user.id === host) {
+    playTime = pTime
+  }
+
   const video = {
     "roomID": roomID,
-    "url": url
+    "url": url,
+    "playTime": playTime
   };
+
+
 
   return fetch(`/api/v1/video/${roomID}/`, {
     method: "PATCH",

@@ -614,14 +614,16 @@ def post_queue(room_id):
 def get_video(room_id):
     room = Room.query.get_or_404(room_id)
 
-    video = room.url
+    #video = room.url
 
     return jsonify(room.to_json()), 201
+
 
 @app.patch("/api/v1/video/<int:room_id>/")
 def patch_video(room_id):
     # room = Room.query.get_or_404(room_id)
     room = Room.from_json(request.get_json())
+
     return jsonify(room.to_json(), 201)
 
 

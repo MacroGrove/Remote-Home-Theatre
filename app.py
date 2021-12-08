@@ -17,7 +17,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, logout_user, LoginManager, UserMixin, current_user
 from wtforms.fields.core import Label
 from hasher import Hasher
-from forms import LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm, VideoUploadForm
+from forms import DeleteRoomForm, LoginForm, RegisterForm, VideoForm, ResetPasswordForm, RoomForm, NewRoomForm, ResetPasswordRequestForm, VideoUploadForm
 from datetime import datetime
 import yagmail
 import jwt
@@ -170,6 +170,11 @@ class Room(db.Model):
             roomID=data['roomID'],
             url=data['url']
         )
+
+    @staticmethod
+    def delete_room(id):
+        Room.query.filter_by(id=id).delete()
+        db.session.commit()
 
 # Create a database model for messages
 class Message(db.Model):
@@ -355,18 +360,25 @@ def register():
 def lobby():
     #User can be accessed by current_user in templates
     form = NewRoomForm()
+    delete = DeleteRoomForm()
+    room_history = []
 
     if request.method == 'GET':  
+
          # Convert user's room history into a list of rooms
-        room_history = []
         for r in session.get('room_history', []):
             room_history.append(Room.query.filter_by(code=r).first())
-        
+            print(f"Room: {r}")
         print(room_history)
 
-        return render_template('lobby.html', form=form, room_history=room_history) #You can access current_user here
+        return render_template('lobby.html', form=form, delete=delete, room_history=room_history) #You can access current_user here
     
     if request.method == 'POST':
+
+        # if delete.validate():
+        #     Room.delete_room(request.form.get("delete-id"))
+        #     return redirect(f"/lobby/")
+
         if form.validate():
             #Add room to user's table
             userRooms = Room.query.filter_by(user_id=current_user.id).all()
@@ -374,6 +386,7 @@ def lobby():
             if len(userRooms) < 6:
                 # generate access code
                 code = rstr.xeger(r'^[a-zA-Z0-9]{8}$')
+                print(f"Code: {code}")
                 one_instance = Room(user_id=current_user.id,  
                     code=code, title=form.name.data, description=form.description.data)
                 
@@ -383,12 +396,21 @@ def lobby():
                 return redirect('/lobby/')
             else: 
                 flash("You have too many rooms to add another")
-                return render_template('lobby.html', form=form)
+                return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
         else: 
             flash("You have to name your room and give it a description")
             for field, error in form.errors.items():
                 flash(f"{field} - {error}")
-            return render_template('lobby.html', form=form)
+            return render_template('lobby.html', form=form, delete=delete, room_history=room_history)
+    
+@app.route('/lobby/delete/', methods=['POST'])
+def delete():
+    delete = DeleteRoomForm()
+
+    if delete.validate():
+        Room.delete_room(request.form.get("delete-id"))
+        print("deleting")
+        return redirect(f"/lobby/")
 
 # ROOM ROUTE
 
@@ -407,6 +429,14 @@ def room(roomCode): # remove 0 after testing!
     uform = VideoUploadForm()
 
     if request.method == 'GET':
+        
+        if "room_history" in session:
+            if room.code not in session['room_history']:
+                session['room_history'].append(room.code)
+        else:
+            session['room_history'] = []
+            session['room_history'].append(room.code)
+
         video = room.url
         # print(video)
         if video != "":
@@ -532,6 +562,14 @@ def get_reset_password(token):
 ###############################################################################
 # API
 ###############################################################################
+
+@app.post("/api/v1/room/<int:room_id>/")
+def delete_room(room_id):
+    room = Room.from_json(request.get_json())
+    Room.delete_room(room.id)
+    db.session.commit()
+
+    return jsonify(room.to_json()), 201
 
 @app.get("/api/v1/messages/<int:room_id>/")
 def get_messages(room_id):

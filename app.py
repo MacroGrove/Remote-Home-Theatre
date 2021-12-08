@@ -236,7 +236,7 @@ db.create_all()
 user = User(id=0, email="moodyms18@gcc.edu", username="blah", password="moodyms18@gcc.edu", is_verified=True)
 
 # user, id, title, url
-room = Room(user=user, id=0, code="abcdfghjkl", title="Test Room", description="", url="")
+room = Room(user=user, id=0, code="abcdefgh", title="Test Room", description="", url="")
 
 # userID, roomID, id, timestamp, message
 message = Message(user=user, room=room, id=0, timestamp=datetime.utcnow(), message="Test message! I hope it works.")
@@ -442,8 +442,8 @@ def room(roomCode): # remove 0 after testing!
         if video != "":
             if 'youtube' in video:
                 video = video.replace("watch?v=", "embed/")
-            elif 'vimeo' in video:
-                video = video.replace("vimeo.com","player.vimeo.com/video")
+            # elif 'vimeo' in video:
+            #     video = video.replace("vimeo.com","player.vimeo.com/video")
             elif 'uploads' not in video:
                 flash('Something went wrong.')
                 return redirect(f"/room/{room.code}/")
@@ -621,8 +621,6 @@ def post_queue(room_id):
 @app.get("/api/v1/video/<int:room_id>/")
 def get_video(room_id):
     room = Room.query.get_or_404(room_id)
-
-    #video = room.url
 
     return jsonify(room.to_json()), 201
 

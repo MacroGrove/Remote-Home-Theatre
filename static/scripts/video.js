@@ -45,7 +45,8 @@ function echoPassthrough(data) {
 async function insertYouTubeVideo(url) {
   let theatre = document.getElementById('theatre');
   let currentPlayer = document.getElementById('player');
-  let trash = theatre.removeChild(currentPlayer);
+  currentPlayer.remove()
+  //let trash = theatre.removeChild(currentPlayer);
 
   const id = url.substring(32, 43);
   const newPlayer = new YT.Player('player', {

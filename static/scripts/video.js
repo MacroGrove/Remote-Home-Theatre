@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", function() {
   
   // getYouTubeVideo()
   const videoButton = document.getElementById("video-button");
-  videoButton.addEventListener("click", patchYouTubeVideo)
+  videoButton.addEventListener("click", postYouTubeVideo)
 });
 
 setInterval(function() {
@@ -53,7 +53,7 @@ async function insertYouTubeVideo(url) {
   });
 }
 
-async function patchYouTubeVideo() {
+async function postYouTubeVideo() {
   let pTime = player.getCurrentTime();
   const roomID = document.getElementById("roomID").value;
   const url = document.getElementById("video-field").value;

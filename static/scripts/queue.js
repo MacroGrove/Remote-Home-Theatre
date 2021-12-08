@@ -3,9 +3,12 @@ window.addEventListener("DOMContentLoaded", function() {
      // on page load, load all current videos in queue
      loadQueue();
 
-     // attach an event listener to the send button to post messages
-     const queueButton = document.getElementById("queue-button")
-     queueButton.addEventListener("click", postQueueVideo)
+     // attach an event listener to the send button to post links
+     const user = document.getElementById("userID").value;
+     if(user.is_anonymous === false) {
+        const queueButton = document.getElementById("queue-button")
+        queueButton.addEventListener("click", postQueueVideo)
+     }
 });
 
 // load links from database
@@ -46,17 +49,17 @@ async function updateQueue() {
  * @param {Array.<queueVideo>} queue an array of Message objects from db
  */
 async function insertVideo(video) {
-    
-    if(video.video != "") {
-        const queue = document.getElementById("queue-list");
-        const item = document.createElement("p");
-        item.innerText = video.url;
-        item.setAttribute("id", video.id)
-        queue.appendChild(item);
-    }
+    const queue = document.getElementById("queue-list");
+    const item = document.createElement("p");
+    item.innerText = video.url;
+    item.setAttribute("id", video.id)
+    queue.appendChild(item);
 
-    let field = document.getElementById("queue-field")
-    field.value = "";
+    const user = document.getElementById("userID").value;
+    if(user.is_anonymous === false) {
+        let field = document.getElementById("queue-field")
+        field.value = "";
+    }
 }
 
 // send queued video to database

@@ -3,8 +3,11 @@ window.addEventListener("DOMContentLoaded", function() {
 	loadMessages();
     
     // attach an event listener to the send button to post messages
-    const messageButton = document.getElementById("message-button");
-    messageButton.addEventListener("click", postMessage);
+    const user = document.getElementById("userID").value;
+    if(user.is_anonymous === false) {
+        const messageButton = document.getElementById("message-button");
+        messageButton.addEventListener("click", postMessage);
+    }
 });
 
 // load messages from database
@@ -78,8 +81,11 @@ async function insertMessage(message) {
         chat.appendChild(body);
 
         // Clear message field
-        let field = document.getElementById("message-field");
-        field.value = "";
+        const user = document.getElementById("userID").value;
+        if(user.is_anonymous === false) {
+            let field = document.getElementById("message-field");
+            field.value = "";
+        }
     }
 }
 

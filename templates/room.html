@@ -25,7 +25,8 @@
         <main>
 
             {# Hidden Values #}
-            <input id="userID" type="hidden" value={{current_user}}>
+            <input id="userID" type="hidden" value={{current_user.id}}>
+            <input id="isAnonymous" type="hidden" value={{current_user.is_anonymous}}>
             <input id="host" type="hidden" value={{room.user_id}}>
             <input id="roomID" type="hidden" value={{room.id}}>
 
@@ -55,18 +56,10 @@
                 <div class="row align-items-start">                  
                     {# Video #}
                     <div id="theatre" class="col">  
-
-                        {% if "youtube" in video %}
-                        <!-- The <iframe> (and video player) replaces this <div> tag. -->
                         <div id="player"></div>
-                        {# <iframe width="854" height="480" src="{{video}}"></iframe> #}
-                        {% elif "vimeo" in video %}
-                        <iframe src="{{video}}" width="854" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                        {% else %}
                         <video width="683" height="384" controls>
                             <source src="{{video}}" type="video/mp4">
                         </video>
-                        {% endif %}
                     </div>
 
                     {# Tab Base #}
@@ -137,6 +130,11 @@
                                     <form>
                                         <input id="queue-field" class="form-control mb-3" placeholder="Queue Link">
                                         <button id="queue-button" type="button" class="btn btn-primary">Submit</button>
+                                    </form> 
+                                    {% else %}
+                                    <form>
+                                        <input id="queue-field" class="form-control mb-3" placeholder="Login to queue." readonly>
+                                        <button id="queue-button" type="button" class="btn btn-primary" disabled>Submit</button>
                                     </form>   
                                     {% endif %}
                                 </div>
@@ -151,6 +149,11 @@
                                     <form>
                                         <input id="message-field" class="form-control mb-3" placeholder="Message">
                                         <button id="message-button" type="button" class="btn btn-primary">Send</button>
+                                    </form>
+                                    {% else %}
+                                    <form>
+                                        <input id="message-field" class="form-control mb-3" placeholder="Login to chat." readonly>
+                                        <button id="message-button" type="button" class="btn btn-primary" disabled>Send</button>
                                     </form>
                                     {% endif%}
                                 </div>                              

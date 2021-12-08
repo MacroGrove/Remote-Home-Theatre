@@ -54,8 +54,8 @@
                         <!-- The <iframe> (and video player) replaces this <div> tag. -->
                         <div id="player"></div>
                         <!-- <iframe width="854" height="480" src="{{video}}"></iframe> -->
-                        {% elif "vimeo" in video %}
-                        <iframe src="{{video}}" width="854" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                        <!-- {% elif "vimeo" in video %}
+                        <iframe src="{{video}}" width="854" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> -->
                         {% else %}
                         <video width="683" height="384" controls>
                             <source src="{{video}}" type="video/mp4">
@@ -67,7 +67,7 @@
                     <div class="col">
 
                         {% if not current_user.is_anonymous %}                     
-                        <!-- Link Input -->
+                        {# Queue Input #}
                         <form method="POST">
                             {{ form.hidden_tag() }}
         
@@ -122,6 +122,7 @@
                         {# Tab Content #}
                         <div class="tab-content" id="myTabContent">
 
+                            {# Hidden Values #}
                             <input id="userID" type="hidden" value={{current_user}}>
                             <input id="host" type="hidden" value={{room.user_id}}>
                             <input id="roomID" type="hidden" value={{room.id}}>

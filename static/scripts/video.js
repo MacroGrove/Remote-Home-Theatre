@@ -71,8 +71,6 @@ async function patchYouTubeVideo() {
     "playTime": playTime
   };
 
-
-
   return fetch(`/api/v1/video/${roomID}/`, {
     method: "PATCH",
     headers: {

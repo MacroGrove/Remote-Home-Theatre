@@ -5,10 +5,10 @@ window.addEventListener("DOMContentLoaded", function() {
 
      // attach an event listener to the send button to post messages
      const queueButton = document.getElementById("queue-button")
-     queueButton.addEventListener("click", storeQueueVideo)
+     queueButton.addEventListener("click", postQueueVideo)
 });
 
-// load messages from database
+// load links from database
 async function loadQueue() {
     const room_id = document.getElementById("roomID").value;
     fetch(`/api/v1/queue/${room_id}`)
@@ -23,6 +23,23 @@ async function loadQueue() {
         });
 }
 
+// udpate links from database
+async function updateQueue() {
+    const room_id = document.getElementById("roomID").value;
+    fetch(`/api/v1/queue/${room_id}`)
+        .then(validateJSON)
+        .then(queueData => {
+            for (const video of queueData.videos) {
+                if(document.getElementById(video.id) == null) {
+                    insertVideo(video);
+                }
+            }
+        })
+        .catch(error => {
+            console.log("Message Fetch Failed: ", error)
+        });
+}
+
 /**
  * Asynchronously add a div with all messagse from db to the page.
  * 
@@ -30,14 +47,20 @@ async function loadQueue() {
  */
 async function insertVideo(video) {
     
-    const queue = document.getElementById("queue-list");
-    const item = document.createElement("p");
-    item.innerText = video.url;
-    queue.appendChild(item);
+    if(video.video != "") {
+        const queue = document.getElementById("queue-list");
+        const item = document.createElement("p");
+        item.innerText = video.url;
+        item.setAttribute("id", video.id)
+        queue.appendChild(item);
+    }
+
+    let field = document.getElementById("queue-field")
+    field.value = "";
 }
 
 // send queued video to database
-async function storeQueueVideo() {
+async function postQueueVideo() {
     /* Steps
         1. get the roomID and url text from the DOM
         2. create a new url object to be posted

@@ -36,21 +36,41 @@ async function getYouTubeVideo()  {
         });  //Create an <iframe> (and YouTube player) after the API code downloads.
 }
 
+// async function insertYouTubeVideo(url) {
+//   let player = document.getElementById('player');
+//   const id = url.substring(32, 43);
+//   player = new YT.Player('player', {
+//     height: '480',
+//     width: '854',
+//     videoId: id,
+//     playerVars: {
+//       'playsinline': 1
+//     },
+//     events: {
+//       'onReady': onPlayerReady,
+//     //  'onStateChange': onPlayerStateChange
+//     }
+//   });
+// }
 async function insertYouTubeVideo(url) {
-  let player = document.getElementById('player');
-  const id = url.substring(32, 43);
-  player = new YT.Player('player', {
-    height: '480',
-    width: '854',
-    videoId: id,
-    playerVars: {
-      'playsinline': 1
-    },
-    events: {
-      'onReady': onPlayerReady,
-    //  'onStateChange': onPlayerStateChange
+  const tru_url = url.replace("watch?v=","embed/");
+  const player = document.getElementById("player");
+
+  if(player.firstChild){
+    const currVid = player.firstChild
+    if (currVid.src != tru_url){
+      currVid.src = tru_url;
     }
-  });
+  }
+  else {
+    const video = document.createElement("iframe");
+    video.src = tru_url;
+    video.width = "854";
+    video.height = "480";
+    player.appendChild(video);
+  }
+
+
 }
 
 async function patchYouTubeVideo() {

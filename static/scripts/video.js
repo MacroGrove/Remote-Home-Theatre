@@ -9,23 +9,22 @@ window.addEventListener("DOMContentLoaded", function() {
   
   getYouTubeVideo()
   const videoButton = document.getElementById("video-button");
-  videoButton.addEventListener("click", postYouTubeVideo)
-
+  videoButton.addEventListener("click", patchYouTubeVideo)
 });
 
 setInterval(function() {
   getYouTubeVideo()
   updateMessages()
   updateQueue()
-}, 5000);
+}, 3000);
 
 async function getYouTubeVideo()  {
   let url
   const roomID = document.getElementById("roomID").value;
+
   // console.log('cycle');
   fetch(`/api/v1/video/${roomID}/`)
         .then(validateJSON)
-        .then(echoPassthrough)
         .then(videoData => {
             url = videoData.url
         })
@@ -33,40 +32,9 @@ async function getYouTubeVideo()  {
           insertYouTubeVideo(url)
         })
         .catch(error => {
-            console.log("Video Fetch Failed: ", error);
+            console.log("Message Fetch Failed: ", error);
         });  //Create an <iframe> (and YouTube player) after the API code downloads.
 }
-
-function echoPassthrough(data) {
-  console.log(data);
-  return data;
-}
-
-// async function insertYouTubeVideo(url) {
-//   let theatre = document.getElementById('theatre');
-//   let currentPlayer = document.getElementById('player');
-//   let trash = theatre.removeChild(currentPlayer);
-
-//   const id = url.substring(32, 43);
-//   const newPlayer = new YT.Player('player', {
-//     height: '480',
-//     width: '854',
-//     videoId: id,
-//     playerVars: {
-//       'playsinline': 1
-//     },
-//     events: {
-//       'onReady': onPlayerReady,
-//     //  'onStateChange': onPlayerStateChange
-//     }
-//   });
-
-//   let player = document.createElement("div");
-//   player.setAttribute("id", "player");
-//   player.appendChild(newPlayer)
-
-//   theatre.appendChild(player);
-// }
 
 // async function insertYouTubeVideo(url) {
 //   let player = document.getElementById('player');
@@ -85,15 +53,21 @@ function echoPassthrough(data) {
 //   });
 // }
 async function insertYouTubeVideo(url) {
+  console.log(url);
   let tru_url = url;
-  if(url.includes("youtube")){
+  const player = document.getElementById("player");
+  if(tru_url.includes("youtube")){
     tru_url = url.replace("watch?v=","embed/");
   }
-  const player = document.getElementById("player");
+  if(tru_url.includes("/static/uploads/")){
+    tru_url = "http://localhost:5000" + tru_url;
+  }
 
-  if(player.firstChild){
-    const currVid = player.firstChild
-    if (currVid.src != tru_url){
+  if(player.hasChildNodes()){
+    const currVid = player.firstChild;
+    if (currVid.src !== tru_url){
+      console.log(currVid.src);
+      console.log(tru_url);
       currVid.src = tru_url;
     }
   }
@@ -104,26 +78,16 @@ async function insertYouTubeVideo(url) {
     video.height = "480";
     player.appendChild(video);
   }
+
+
 }
 
-async function postYouTubeVideo() {
-  let player = document.getElementById('player');
-  let pTime = player.getCurrentTime();
+async function patchYouTubeVideo() {
   const roomID = document.getElementById("roomID").value;
   const url = document.getElementById("video-field").value;
-
-  const user = document.getElementById("userID").value;
-  console.log(`VIDEO: ${user}`)
-  const host = document.getElementById("host").value;
-
-  if (user.id === host) {
-    playTime = pTime
-  }
-
   const video = {
     "roomID": roomID,
-    "url": url,
-    "playTime": playTime
+    "url": url
   };
 
   return fetch(`/api/v1/video/${roomID}/`, {

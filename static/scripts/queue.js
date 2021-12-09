@@ -51,9 +51,6 @@ async function insertVideo(video) {
         const queue = document.getElementById("queue-list");
         const item = document.createElement("p");
         let url = video.url;
-        if(url.includes("static")){
-            url = url.replace("/static/uploads/", "");
-        }
         item.innerText = url;
         item.setAttribute("id", video.id)
         queue.appendChild(item);

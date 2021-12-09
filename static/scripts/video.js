@@ -53,7 +53,10 @@ async function getYouTubeVideo()  {
 //   });
 // }
 async function insertYouTubeVideo(url) {
-  const tru_url = url.replace("watch?v=","embed/");
+  let tru_url = url;
+  if(url.includes("youtube")){
+    tru_url = url.replace("watch?v=","embed/");
+  }
   const player = document.getElementById("player");
 
   if(player.firstChild){

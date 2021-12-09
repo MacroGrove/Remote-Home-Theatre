@@ -1,11 +1,11 @@
 window.addEventListener("DOMContentLoaded", function() {
 
-     // on page load, load all current videos in queue
-     loadQueue();
+    // on page load, load all current videos in queue
+    loadQueue();
 
-     // attach an event listener to the send button to post messages
-     const queueButton = document.getElementById("queue-button")
-     queueButton.addEventListener("click", postQueueVideo)
+    // attach an event listener to the send button to post links
+    const queueButton = document.getElementById("queue-button")
+    queueButton.addEventListener("click", postQueueVideo)
 });
 
 // load links from database
@@ -19,7 +19,7 @@ async function loadQueue() {
             }
         })
         .catch(error => {
-            console.log("Message Fetch Failed: ", error)
+            console.log("Queue Fetch Failed: ", error)
         });
 }
 
@@ -36,7 +36,7 @@ async function updateQueue() {
             }
         })
         .catch(error => {
-            console.log("Message Fetch Failed: ", error)
+            console.log("Queue Fetch Failed: ", error)
         });
 }
 
@@ -59,6 +59,7 @@ async function insertVideo(video) {
         queue.appendChild(item);
     }
 
+    // Clear queue input
     let field = document.getElementById("queue-field")
     field.value = "";
 }

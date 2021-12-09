@@ -4,7 +4,7 @@ window.addEventListener("DOMContentLoaded", function() {
     
     // attach an event listener to the send button to post messages
     const messageButton = document.getElementById("message-button");
-    messageButton.addEventListener("click", postMessage);
+    messageButton.addEventListener("click", postMessage);   
 });
 
 // load messages from database

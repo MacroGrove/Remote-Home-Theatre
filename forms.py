@@ -28,6 +28,10 @@ class NewRoomForm(FlaskForm):
     description = StringField("Description", validators=[Optional()])
     submit = SubmitField("Create")
 
+class DeleteRoomForm(FlaskForm):
+    # code = StringField("Code", validators=[InputRequired()])
+    submit = SubmitField(" X ")
+
 class ResetPasswordForm(FlaskForm):
     password = PasswordField("Enter New Password", validators=[InputRequired()])
     confirm_password = PasswordField("Confirm Password", validators=[InputRequired(), EqualTo('password')])

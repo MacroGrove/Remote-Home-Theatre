@@ -1,14 +1,14 @@
 window.addEventListener("DOMContentLoaded", function() {
 
-     // on page load, load all current videos in queue
-     loadQueue();
+    // on page load, load all current videos in queue
+    loadQueue();
 
-     // attach an event listener to the send button to post messages
-     const queueButton = document.getElementById("queue-button")
-     queueButton.addEventListener("click", storeQueueVideo)
+    // attach an event listener to the send button to post links
+    const queueButton = document.getElementById("queue-button")
+    queueButton.addEventListener("click", postQueueVideo)
 });
 
-// load messages from database
+// load links from database
 async function loadQueue() {
     const room_id = document.getElementById("roomID").value;
     fetch(`/api/v1/queue/${room_id}`)
@@ -19,7 +19,24 @@ async function loadQueue() {
             }
         })
         .catch(error => {
-            console.log("Message Fetch Failed: ", error)
+            console.log("Queue Fetch Failed: ", error)
+        });
+}
+
+// udpate links from database
+async function updateQueue() {
+    const room_id = document.getElementById("roomID").value;
+    fetch(`/api/v1/queue/${room_id}`)
+        .then(validateJSON)
+        .then(queueData => {
+            for (const video of queueData.videos) {
+                if(document.getElementById(video.id) == null) {
+                    insertVideo(video);
+                }
+            }
+        })
+        .catch(error => {
+            console.log("Queue Fetch Failed: ", error)
         });
 }
 
@@ -29,15 +46,19 @@ async function loadQueue() {
  * @param {Array.<queueVideo>} queue an array of Message objects from db
  */
 async function insertVideo(video) {
-    
     const queue = document.getElementById("queue-list");
     const item = document.createElement("p");
     item.innerText = video.url;
+    item.setAttribute("id", video.id)
     queue.appendChild(item);
+
+    // Clear queue input
+    let field = document.getElementById("queue-field")
+    field.value = "";
 }
 
 // send queued video to database
-async function storeQueueVideo() {
+async function postQueueVideo() {
     /* Steps
         1. get the roomID and url text from the DOM
         2. create a new url object to be posted

@@ -47,31 +47,24 @@
             {# Display Rooms #}
             <div class="container-fluid">
                 {% for room in current_user.rooms %}
-                <div class="card-deck mb-3">
+                <div class="card-deck mb-3 text-center">
                     <div class="col">
                         <div class="card mb-4 box-shadow">
-                            <div class="card-header d-flex flex-row-reverse">
-                                {# Delete Room #}
-                                <!-- <a href="/lobby/{{room.code}}" method="DELETE" class="btn btn-danger"> X </a> -->
-                                <form method="POST" class="m-0">
-                                    <div class="form-group">
-                                        {{ delete.hidden_tag() }}
-                                        <input type="hidden"  name="delete-id" value="{{ room.id }}" required>
-                                        {{ delete.submit(class="btn btn-danger glow-button", action="/lobby/delete/", method="POST") }}
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="card-body text-center">
-                                <h5 class="card-title">{{ room.title }}</h5>
-                                <p>Access Code: {{ room.code }}</p>
-                                {% if room.description %}
-                                <p class="card-text"> {{ room.description }}</p>
-                                {% endif %}
-                                <a href="/room/{{room.code}}" class="container-fluid btn btn-outline-primary">Enter</a>
+                            <div class="card-header">{{ room.id }}</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ room.title }}</h5>
+                                    <p>Access Code: {{ room.code }}</p>
+                                
+                                    {% if room.description %}
+                                    <p class="card-text"> {{ room.description }}</p>
+                                    {% endif %}
+                                    
+                                    <a href="/room/{{room.code}}" class="container-fluid btn btn-outline-primary text-center">Enter</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> 
                 {% endfor %}  
         
                     {# Add New Room Button #}

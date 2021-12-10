@@ -13,9 +13,9 @@ window.addEventListener("DOMContentLoaded", function() {
 });
 
 setInterval(function() {
-  getYouTubeVideo()
-  updateMessages()
-  updateQueue()
+  getYouTubeVideo();
+  updateMessages();
+  updateQueue();
 }, 3000);
 
 async function getYouTubeVideo()  {
